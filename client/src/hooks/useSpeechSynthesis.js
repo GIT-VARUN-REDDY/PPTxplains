@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { API_BASE } from '../services/api.js';
 
 /**
  * Curated list of ultra-realistic, natural studio-grade neural voices.
@@ -258,7 +259,7 @@ export function useSpeechSynthesis() {
         setIsPaused(false);
 
         // Fetch Studio Neural MP3 from server
-        const response = await fetch('/api/tts/speak', {
+        const response = await fetch(`${API_BASE}/tts/speak`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           signal: controller.signal,

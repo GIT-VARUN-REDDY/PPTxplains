@@ -2,9 +2,16 @@
  * API service for loading presentation data and communicating with backend Gemini AI endpoint.
  */
 
-const API_BASE = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE)
-  ? import.meta.env.VITE_API_BASE
-  : '/api';
+export const API_BASE = (() => {
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    if (import.meta.env.VITE_API_BASE) return import.meta.env.VITE_API_BASE.replace(/\/$/, '');
+    if (import.meta.env.VITE_API_URL) return `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api`;
+  }
+  if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+    return 'https://pptxplains-1.onrender.com/api';
+  }
+  return '/api';
+})();
 
 /**
  * Fetch presentation metadata and slides.

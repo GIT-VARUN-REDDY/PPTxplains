@@ -29,14 +29,17 @@ app.use((req, res, next) => {
 });
 
 // Flexible CORS configuration supporting dev on any local port and custom CLIENT_URL
-const allowedOrigins = CLIENT_URL.split(',').map(u => u.trim()).filter(Boolean);
+const allowedOrigins = CLIENT_URL.split(',').map(u => u.trim().replace(/\/$/, '')).filter(Boolean);
 
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
+    const cleanOrigin = origin.replace(/\/$/, '');
     if (
-      allowedOrigins.includes(origin) ||
-      /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
+      allowedOrigins.includes(cleanOrigin) ||
+      allowedOrigins.some(o => o.startsWith(cleanOrigin) || cleanOrigin.startsWith(o)) ||
+      /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin) ||
+      /\.vercel\.app$/.test(cleanOrigin.replace(/^https?:\/\//, ''))
     ) {
       return callback(null, true);
     }
