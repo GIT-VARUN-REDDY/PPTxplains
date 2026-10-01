@@ -1,0 +1,675 @@
+/* ==========================================================================
+   AI PRESENTATION ASSISTANT - GLOBAL DESIGN SYSTEM
+   Modern Corporate SaaS Aesthetic (Dark Mode First, High Contrast)
+   ========================================================================== */
+
+:root {
+  /* Color Palette */
+  --bg-app: #080c14;
+  --bg-surface: #0e1524;
+  --bg-surface-elevated: #131d31;
+  --bg-surface-glass: rgba(14, 21, 36, 0.85);
+  --border-subtle: #1e293b;
+  --border-medium: #2a3a55;
+  --border-focus: #38bdf8;
+
+  /* Typography Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-accent: #38bdf8;
+  --text-success: #10b981;
+  --text-warning: #f59e0b;
+  --text-danger: #ef4444;
+
+  /* Accent & Gradients */
+  --accent-cyan: #38bdf8;
+  --accent-cyan-dim: rgba(56, 189, 248, 0.12);
+  --accent-cyan-glow: rgba(56, 189, 248, 0.25);
+  --accent-indigo: #6366f1;
+  --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+  --surface-gradient: linear-gradient(180deg, #10192b 0%, #0b111e 100%);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.18);
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Spacing & Sizes */
+  --header-height: 64px;
+  --bottom-bar-height: 76px;
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+code, kbd, samp, pre {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-app);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cyan);
+}
+
+/* Selection */
+::selection {
+  background: rgba(56, 189, 248, 0.3);
+  color: #ffffff;
+}
+
+/* Focus Outline */
+:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+/* Layout Utilities */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-app);
+}
+
+/* Subtle Animated Mesh / Grid Background */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(30, 41, 59, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(30, 41, 59, 0.25) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-primary);
+  text-decoration: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-primary {
+  background: var(--accent-cyan);
+  color: #060b14;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.25);
+}
+.btn-primary:hover:not(:disabled) {
+  background: #7dd3fc;
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+  transform: translateY(-1px);
+}
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: var(--bg-surface-elevated);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: #1a2742;
+  border-color: var(--accent-cyan);
+  color: #ffffff;
+}
+
+.btn-ghost {
+  color: var(--text-secondary);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+.btn-danger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: var(--text-danger);
+  color: #ffffff;
+}
+
+/* Icon Buttons */
+.btn-icon {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  transition: all var(--transition-fast);
+}
+.btn-icon:hover:not(:disabled) {
+  background: var(--bg-surface-elevated);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+.badge-cyan {
+  background: var(--accent-cyan-dim);
+  border-color: rgba(56, 189, 248, 0.25);
+  color: var(--accent-cyan);
+}
+.badge-emerald {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.25);
+  color: #34d399;
+}
+.badge-muted {
+  background: rgba(148, 163, 184, 0.1);
+  border-color: var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+/* Animations */
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 16px rgba(56, 189, 248, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
+  }
+}
+
+@keyframes voiceWave {
+  0%, 100% { height: 8px; }
+  50% { height: 28px; }
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes laserPing {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.8);
+  }
+  70% {
+    transform: scale(1.6);
+    opacity: 0.6;
+    box-shadow: 0 0 0 10px rgba(56, 189, 248, 0);
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
+  }
+}
+
+@keyframes cursorFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(-1deg);
+  }
+}
+
+@keyframes waveBar {
+  0%, 100% {
+    height: 4px;
+  }
+  50% {
+    height: 12px;
+  }
+}
+
+/* Real-time SVG Border Drawing Animation */
+@keyframes drawBorderStroke {
+  0% {
+    stroke-dashoffset: 100;
+    opacity: 0.2;
+  }
+  65% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+/* Snap-in Corners */
+@keyframes cornerSnapIn {
+  0% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+  65% {
+    transform: scale(0.92);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Holographic Laser Scanline */
+@keyframes holoScan {
+  0% {
+    top: 2px;
+    opacity: 0.9;
+  }
+  100% {
+    top: calc(100% - 4px);
+    opacity: 0;
+  }
+}
+
+/* Pulsing Laser Beacon Dot */
+@keyframes laserBeamPulse {
+  0%, 100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 10px #38bdf8, 0 0 20px #38bdf8;
+  }
+  50% {
+    transform: scale(1.25);
+    box-shadow: 0 0 18px #38bdf8, 0 0 32px #818cf8;
+  }
+}
+
+/* Spotlight Card Interior Breathing Glow */
+@keyframes cardSpotlightPulse {
+  0%, 100% {
+    fill-opacity: 0.05;
+  }
+  50% {
+    fill-opacity: 0.12;
+  }
+}
+
+/* Badge Micro-Pop */
+@keyframes badgePop {
+  0% {
+    transform: translateY(6px) scale(0.85);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Hover effect on interactive context hitboxes */
+.context-interactive-hitbox:hover {
+  background-color: rgba(56, 189, 248, 0.06) !important;
+  border: 1px dashed rgba(56, 189, 248, 0.45) !important;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.2);
+}
+
+.animate-pulse-ring {
+  animation: pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-spin-slow {
+  animation: spinSlow 8s linear infinite;
+}
+
+/* Presentation Split Layout */
+.presentation-workspace {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  height: calc(100vh - var(--header-height) - var(--bottom-bar-height));
+  overflow: hidden;
+  background-color: var(--bg-app);
+}
+
+@media (min-width: 1440px) {
+  .presentation-workspace {
+    grid-template-columns: 1fr 420px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .presentation-workspace {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow-y: auto;
+  }
+}
+
+/* Slide Container Area */
+.slide-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  background-color: #070a10;
+  overflow: hidden;
+}
+
+.slide-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  aspect-ratio: 16 / 9;
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg), 0 0 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--border-subtle);
+  background-color: #0c121e;
+  transition: opacity var(--transition-base), transform var(--transition-base);
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+}
+
+/* AI Assistant Panel */
+.ai-panel {
+  background-color: var(--bg-surface);
+  border-left: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+  .ai-panel {
+    border-left: none;
+    border-top: 1px solid var(--border-subtle);
+    min-height: 480px;
+  }
+}
+
+/* ==========================================================================
+   Fullscreen Presentation Mode Overrides
+   ========================================================================== */
+.app-container.fullscreen-active,
+.app-container:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background-color: #000000;
+}
+
+/* Presentation workspace takes 100% full screen in fullscreen */
+.fullscreen-active .presentation-workspace,
+.app-container:fullscreen .presentation-workspace {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  grid-template-columns: 1fr;
+  overflow: hidden;
+  background-color: #000000;
+  z-index: 1;
+}
+
+/* Hide AI Doubt Panel in fullscreen to give 100% canvas to presentation */
+.fullscreen-active .ai-panel,
+.app-container:fullscreen .ai-panel {
+  display: none !important;
+}
+
+/* Fullscreen Slide Stage fills the entire screen */
+.fullscreen-active .slide-stage,
+.app-container:fullscreen .slide-stage {
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: #000000;
+  overflow: hidden;
+}
+
+/* Slide Wrapper fits cleanly inside viewport maintaining exact 16:9 ratio */
+.fullscreen-active .slide-wrapper,
+.app-container:fullscreen .slide-wrapper {
+  position: relative;
+  width: min(100vw, calc(100vh * 16 / 9));
+  height: min(100vh, calc(100vw * 9 / 16));
+  aspect-ratio: 16 / 9;
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+  overflow: visible !important;
+}
+
+.fullscreen-active .slide-image,
+.app-container:fullscreen .slide-image {
+  max-width: 100vw;
+  max-height: 100vh;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Header & Controls in Fullscreen: Floating Glassmorphic Overlays with Auto-Hide */
+.fullscreen-active .app-header,
+.app-container:fullscreen .app-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: linear-gradient(180deg, rgba(6, 11, 20, 0.94) 0%, rgba(6, 11, 20, 0.5) 70%, transparent 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 250ms ease, transform 250ms ease;
+  pointer-events: none;
+}
+
+.fullscreen-active:hover .app-header,
+.app-container:fullscreen:hover .app-header,
+.fullscreen-active .app-header:hover,
+.app-container:fullscreen .app-header:hover,
+.fullscreen-active .app-header:focus-within,
+.app-container:fullscreen .app-header:focus-within {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.fullscreen-active footer,
+.app-container:fullscreen footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: linear-gradient(0deg, rgba(6, 11, 20, 0.94) 0%, rgba(6, 11, 20, 0.6) 65%, transparent 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 250ms ease, transform 250ms ease;
+  pointer-events: none;
+}
+
+.fullscreen-active:hover footer,
+.app-container:fullscreen:hover footer,
+.fullscreen-active footer:hover,
+.app-container:fullscreen footer:hover,
+.fullscreen-active footer:focus-within,
+.app-container:fullscreen footer:focus-within {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Fullscreen Inactive Mode: Auto-hide cursor and floating controls */
+.fullscreen-active.fullscreen-inactive,
+.app-container:fullscreen.fullscreen-inactive {
+  cursor: none !important;
+}
+
+.fullscreen-active.fullscreen-inactive * {
+  cursor: none !important;
+}
+
+.fullscreen-active.fullscreen-inactive .app-header,
+.app-container:fullscreen.fullscreen-inactive .app-header {
+  opacity: 0 !important;
+  transform: translateY(-8px) !important;
+  pointer-events: none !important;
+}
+
+.fullscreen-active.fullscreen-inactive footer,
+.app-container:fullscreen.fullscreen-inactive footer {
+  opacity: 0 !important;
+  transform: translateY(8px) !important;
+  pointer-events: none !important;
+}
+
+/* CRITICAL: Fullscreen Subtitles / Captions Styling Guaranteed Visible */
+.fullscreen-active .movie-subtitles-overlay,
+.app-container:fullscreen .movie-subtitles-overlay {
+  position: fixed !important;
+  bottom: clamp(36px, 8vh, 80px) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 99999 !important;
+  max-width: 90vw !important;
+  width: auto !important;
+  pointer-events: none !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transition: bottom 220ms cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+}
+
+/* Elevate subtitles when footer controls are revealed on hover so they never collide */
+.fullscreen-active:has(footer:hover) .movie-subtitles-overlay,
+.app-container:fullscreen:has(footer:hover) .movie-subtitles-overlay,
+.fullscreen-active:has(footer:focus-within) .movie-subtitles-overlay,
+.app-container:fullscreen:has(footer:focus-within) .movie-subtitles-overlay {
+  bottom: clamp(86px, 12vh, 120px) !important;
+}
+
+.fullscreen-active .movie-subtitles-pill,
+.app-container:fullscreen .movie-subtitles-pill {
+  padding: 10px 28px !important;
+  background-color: rgba(8, 12, 22, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 24px rgba(56, 189, 248, 0.3) !important;
+  border-radius: 9999px !important;
+}
+
+.fullscreen-active .movie-subtitles-pill span,
+.app-container:fullscreen .movie-subtitles-pill span {
+  font-size: clamp(17px, 2.2vw, 26px) !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0.3px !important;
+}

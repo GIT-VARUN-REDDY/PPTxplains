@@ -1,0 +1,122 @@
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+      <defs>
+        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#0a0e17" />
+          <stop offset="60%" stop-color="#0f172a" />
+          <stop offset="100%" stop-color="#080c14" />
+        </linearGradient>
+        <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.8" />
+          <stop offset="100%" stop-color="#6366f1" stop-opacity="0.2" />
+        </linearGradient>
+        <pattern id="gridPattern" width="60" height="60" patternUnits="userSpaceOnUse">
+          <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#1e293b" stroke-width="0.8" stroke-opacity="0.3" />
+        </pattern>
+      </defs>
+
+      <!-- Background -->
+      <rect width="1920" height="1080" fill="url(#bgGrad)" />
+      <rect width="1920" height="1080" fill="url(#gridPattern)" />
+
+      <!-- Subtle ambient glows -->
+      <circle cx="200" cy="150" r="350" fill="#38bdf8" opacity="0.06" filter="blur(80px)" />
+      <circle cx="1700" cy="900" r="450" fill="#6366f1" opacity="0.05" filter="blur(100px)" />
+
+      <!-- Top Header Bar -->
+      <g transform="translate(140, 90)">
+        <rect x="0" y="0" width="1640" height="2" fill="#1e293b" />
+        <rect x="0" y="0" width="1230" height="2" fill="url(#glowGrad)" />
+        
+        <rect x="0" y="-36" width="220" height="28" rx="6" fill="#1e293b" />
+        <text x="110" y="-18" fill="#38bdf8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" text-anchor="middle" letter-spacing="1.5">
+          SYSTEMS &amp; LIFECYCLE
+        </text>
+
+        <text x="1640" y="-16" fill="#64748b" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="600" text-anchor="end">
+          SLIDE 09 / 12
+        </text>
+      </g>
+
+      <!-- Title & Subtitle -->
+      <g transform="translate(140, 190)">
+        <text x="0" y="48" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="800" letter-spacing="-1">
+          Content Operations
+        </text>
+        <text x="0" y="96" fill="#94a3b8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="400">
+          Modular Architecture, Continuous Localization &amp; Omnichannel Delivery
+        </text>
+      </g>
+
+      <!-- Key Points Section -->
+      
+      <g transform="translate(140, 370)">
+        <rect width="980" height="145" rx="16" fill="#111827" stroke="#1f293d" stroke-width="1.2" />
+        <circle cx="50" cy="72" r="20" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+        <text x="50" y="79" fill="#38bdf8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" text-anchor="middle">1</text>
+        <text x="96" y="62" fill="#e2e8f0" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="500">
+          <tspan x="96" dy="0">Modular Component Architecture: Reusable visual</tspan>
+          <tspan x="96" dy="32" fill="#94a3b8" font-size="20">building blocks that update instantly when specs change</tspan>
+        </text>
+      </g>
+    
+      <g transform="translate(140, 545)">
+        <rect width="980" height="145" rx="16" fill="#111827" stroke="#1f293d" stroke-width="1.2" />
+        <circle cx="50" cy="72" r="20" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+        <text x="50" y="79" fill="#38bdf8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" text-anchor="middle">2</text>
+        <text x="96" y="62" fill="#e2e8f0" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="500">
+          <tspan x="96" dy="0">Zero-Shot Localization: Automated multi-lingual</tspan>
+          <tspan x="96" dy="32" fill="#94a3b8" font-size="20">dubbing and subtitle sync across 12 engineering languages</tspan>
+        </text>
+      </g>
+    
+      <g transform="translate(140, 720)">
+        <rect width="980" height="145" rx="16" fill="#111827" stroke="#1f293d" stroke-width="1.2" />
+        <circle cx="50" cy="72" r="20" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+        <text x="50" y="79" fill="#38bdf8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" text-anchor="middle">3</text>
+        <text x="96" y="62" fill="#e2e8f0" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="500">
+          <tspan x="96" dy="0">Omnichannel Distribution: Embedded seamlessly</tspan>
+          <tspan x="96" dy="32" fill="#94a3b8" font-size="20">inside interactive documentation, LMS portals, and developer hubs</tspan>
+        </text>
+      </g>
+    
+
+      <!-- Metrics Section -->
+      
+      <g transform="translate(1180, 340)">
+        <rect width="600" height="150" rx="16" fill="#131a2a" stroke="#253248" stroke-width="1.5" />
+        <rect x="0" y="0" width="6" height="150" rx="3" fill="#38bdf8" />
+        <text x="32" y="52" fill="#94a3b8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="500">GLOBAL LANGUAGES</text>
+        <text x="32" y="112" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="700" letter-spacing="-1">12+</text>
+        <text x="320" y="106" fill="#38bdf8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="600">Zero-shot dubbed</text>
+      </g>
+    
+      <g transform="translate(1180, 530)">
+        <rect width="600" height="150" rx="16" fill="#131a2a" stroke="#253248" stroke-width="1.5" />
+        <rect x="0" y="0" width="6" height="150" rx="3" fill="#38bdf8" />
+        <text x="32" y="52" fill="#94a3b8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="500">COMPONENT REUSE</text>
+        <text x="32" y="112" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="700" letter-spacing="-1">70%</text>
+        <text x="320" y="106" fill="#38bdf8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="600">Modular assets</text>
+      </g>
+    
+      <g transform="translate(1180, 720)">
+        <rect width="600" height="150" rx="16" fill="#131a2a" stroke="#253248" stroke-width="1.5" />
+        <rect x="0" y="0" width="6" height="150" rx="3" fill="#38bdf8" />
+        <text x="32" y="52" fill="#94a3b8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="500">MAINTENANCE COST</text>
+        <text x="32" y="112" fill="#f8fafc" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="700" letter-spacing="-1">-60%</text>
+        <text x="320" y="106" fill="#38bdf8" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="600">Version updates</text>
+      </g>
+    
+
+      <!-- Bottom Footer -->
+      <g transform="translate(140, 990)">
+        <line x1="0" y1="0" x2="1640" y2="0" stroke="#1e293d" stroke-width="1.5" />
+        <text x="0" y="32" fill="#475569" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="500">
+          AI Presentation Assistant &#8226; AI-Generated Technical Videos Strategy
+        </text>
+        <text x="1640" y="32" fill="#475569" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="500" text-anchor="end">
+          Confidential &#8226; Interactive Knowledge Engine
+        </text>
+      </g>
+    </svg>
+  
