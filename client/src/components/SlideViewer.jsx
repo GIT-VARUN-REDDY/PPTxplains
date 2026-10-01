@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, memo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, memo } from 'react';
 import { RotateCcw, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { SlideSubtitles } from './SlideSubtitles.jsx';
 import { SlideTopicSpotlight } from './SlideTopicSpotlight.jsx';

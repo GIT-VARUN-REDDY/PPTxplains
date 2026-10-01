@@ -2,7 +2,9 @@
  * API service for loading presentation data and communicating with backend Gemini AI endpoint.
  */
 
-const API_BASE = '/api';
+const API_BASE = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE)
+  ? import.meta.env.VITE_API_BASE
+  : '/api';
 
 /**
  * Fetch presentation metadata and slides.
@@ -12,9 +14,12 @@ export async function fetchPresentation(id = 'ai-video-strategy') {
   try {
     // Try static JSON first
     const staticRes = await fetch(`/presentations/${id}/presentation.json`);
-    if (staticRes.ok) {
+    const contentType = staticRes.headers.get('content-type') || '';
+    if (staticRes.ok && (contentType.includes('application/json') || contentType.includes('text/plain'))) {
       const data = await staticRes.json();
-      return data;
+      if (data && data.slides) {
+        return data;
+      }
     }
   } catch (err) {
     console.warn('[API] Could not load static JSON, falling back to server API...', err);

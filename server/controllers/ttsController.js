@@ -14,10 +14,25 @@ export async function handleGenerateTTS(req, res, next) {
       });
     }
 
+    const trimmedText = text.trim();
+    if (trimmedText.length > 4000) {
+      return res.status(400).json({
+        success: false,
+        error: 'Text exceeds maximum limit of 4000 characters.'
+      });
+    }
+
+    // Validate rate
+    const parsedRate = typeof rate === 'number' ? rate : parseFloat(rate);
+    const validRate = (!isNaN(parsedRate) && parsedRate >= 0.5 && parsedRate <= 2.0) ? parsedRate : 1.0;
+
+    // Sanitize voice parameter
+    const validVoice = typeof voice === 'string' && /^[a-zA-Z0-9-]+$/.test(voice) ? voice : 'en-US-GuyNeural';
+
     const audioBuffer = await generateNeuralAudio({
-      text,
-      voice,
-      rate
+      text: trimmedText,
+      voice: validVoice,
+      rate: validRate
     });
 
     res.set({

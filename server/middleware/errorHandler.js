@@ -3,6 +3,10 @@
  * Ensures internal errors, API keys, and sensitive stack traces are never leaked to client.
  */
 export const errorHandler = (err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+
   console.error('[Server Error]', {
     message: err.message,
     stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
@@ -18,9 +22,10 @@ export const errorHandler = (err, req, res, next) => {
   }
 
   const statusCode = err.status || err.statusCode || 500;
-  const userMessage = err.isOperational
-    ? err.message
-    : 'Something went wrong while getting the AI response. Please try again.';
+  // If it's a 4xx client error or operational error, preserve the explicit message
+  const userMessage = (statusCode < 500 || err.isOperational)
+    ? (err.message || 'Invalid request.')
+    : 'Something went wrong while processing your request. Please try again.';
 
   res.status(statusCode).json({
     success: false,

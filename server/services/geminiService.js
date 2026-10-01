@@ -1,9 +1,16 @@
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { GoogleGenAI } from '@google/genai';
 import { SYSTEM_INSTRUCTION, buildDoubtPrompt } from '../utils/prompts.js';
 import { generateSlideSvg } from '../utils/slideSvgGenerator.js';
 import { saveCustomPresentation } from '../data/presentations.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 dotenv.config();
 
 /**
@@ -55,7 +62,7 @@ export async function answerDoubt({
   abortSignal
 }) {
   const apiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : '';
-  const configuredModel = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
+  const configuredModel = process.env.GEMINI_MODEL ? process.env.GEMINI_MODEL.trim() : 'gemini-2.5-flash';
 
   const prompt = buildDoubtPrompt({
     presentationTitle,
@@ -73,12 +80,15 @@ export async function answerDoubt({
     return generateContextualFallback({ currentSlide, presentationTitle, userQuestion });
   }
 
-  // Priority model sequence
+  // Priority model sequence: tries configured model from .env first, then robust fallback sequence
   const modelsToAttempt = [
     configuredModel,
     'gemini-3.5-flash-lite',
-    'gemini-3.5-flash',
     'gemini-3.8-flash',
+    'gemini-3.5-flash',
+    'gemini-2.0-flash',
+    'gemini-1.5-flash',
+    'gemini-2.5-flash',
     'gemini-flash-latest'
   ].filter((v, idx, arr) => arr.indexOf(v) === idx);
 
@@ -137,7 +147,7 @@ export async function answerVoiceDoubt({
   abortSignal
 }) {
   const apiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : '';
-  const configuredModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+  const configuredModel = process.env.GEMINI_MODEL ? process.env.GEMINI_MODEL.trim() : 'gemini-2.5-flash';
   const slideNum = currentSlide.slideNumber || currentSlide.id || 1;
   const slideTitle = currentSlide.title || 'Overview';
 
@@ -158,8 +168,11 @@ export async function answerVoiceDoubt({
   const modelsToAttempt = [
     configuredModel,
     'gemini-3.5-flash-lite',
-    'gemini-3.5-flash',
     'gemini-3.8-flash',
+    'gemini-3.5-flash',
+    'gemini-2.0-flash',
+    'gemini-1.5-flash',
+    'gemini-2.5-flash',
     'gemini-flash-latest'
   ].filter((v, idx, arr) => arr.indexOf(v) === idx);
 
@@ -276,7 +289,7 @@ Instructions:
  */
 export async function ingestPresentation({ fileBase64, mimeType, textContent, topicTitle }) {
   const apiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : '';
-  const configuredModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+  const configuredModel = process.env.GEMINI_MODEL ? process.env.GEMINI_MODEL.trim() : 'gemini-2.5-flash';
   const presId = 'custom-' + Date.now();
 
   const promptText = `
@@ -322,7 +335,16 @@ ${textContent || topicTitle || 'Enterprise Technology Architecture'}
 
   if (apiKey && apiKey !== 'YOUR_KEY_HERE') {
     const ai = new GoogleGenAI({ apiKey });
-    const modelsToAttempt = [configuredModel, 'gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-flash-latest'];
+    const modelsToAttempt = [
+      configuredModel,
+      'gemini-3.5-flash-lite',
+      'gemini-3.8-flash',
+      'gemini-3.5-flash',
+      'gemini-2.0-flash',
+      'gemini-1.5-flash',
+      'gemini-2.5-flash',
+      'gemini-flash-latest'
+    ].filter((v, idx, arr) => arr.indexOf(v) === idx);
 
     for (const model of modelsToAttempt) {
       try {

@@ -7,18 +7,41 @@ import { fileURLToPath } from 'url';
 import apiRoutes from './routes/aiRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
-dotenv.config();
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Load environment variables reliably from server/.env or root .env
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 
-// CORS configuration
+// Security headers middleware
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'microphone=(self)');
+  next();
+});
+
+// Flexible CORS configuration supporting dev on any local port and custom CLIENT_URL
+const allowedOrigins = CLIENT_URL.split(',').map(u => u.trim()).filter(Boolean);
+
 app.use(cors({
-  origin: [CLIENT_URL, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (
+      allowedOrigins.includes(origin) ||
+      /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
+    ) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -48,13 +71,27 @@ app.all('/api/*', (req, res) => {
   });
 });
 
+// Also serve presentations directly from client/public/presentations if present
+const publicPresentationsPath = path.resolve(__dirname, '../client/public/presentations');
+if (fs.existsSync(publicPresentationsPath)) {
+  app.use('/presentations', express.static(publicPresentationsPath));
+}
+
 // Serve production static assets from client/dist if present
 const clientDistPath = path.resolve(__dirname, '../client/dist');
 if (fs.existsSync(clientDistPath)) {
   console.log(`[Production] Serving static client build from: ${clientDistPath}`);
   app.use(express.static(clientDistPath));
 
-  // SPA fallback: any non-API route serves index.html
+  // Clean 404 for missing static files with extensions instead of returning index.html
+  app.get(/\.[a-zA-Z0-9]+$/, (req, res) => {
+    res.status(404).json({
+      success: false,
+      error: 'File not found.'
+    });
+  });
+
+  // SPA fallback: any non-file route serves index.html
   app.get('*', (req, res) => {
     res.sendFile(path.join(clientDistPath, 'index.html'));
   });
@@ -64,22 +101,28 @@ if (fs.existsSync(clientDistPath)) {
 app.use(errorHandler);
 
 // Start server
-const server = app.listen(PORT, () => {
-  console.log(`===============================================`);
-  console.log(` AI Presentation Assistant Server`);
-  console.log(` Running on: http://localhost:${PORT}`);
-  console.log(` Health check: http://localhost:${PORT}/api/health`);
-  console.log(` Client URL: ${CLIENT_URL}`);
-  console.log(` Gemini Key: ${process.env.GEMINI_API_KEY ? 'Configured' : 'Local Fallback Mode'}`);
-  console.log(`===============================================`);
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received: closing HTTP server');
-  server.close(() => {
-    console.log('HTTP server closed');
+let server = null;
+if (process.env.NODE_ENV !== 'test') {
+  server = app.listen(PORT, () => {
+    console.log(`===============================================`);
+    console.log(` AI Presentation Assistant Server`);
+    console.log(` Running on: http://localhost:${PORT}`);
+    console.log(` Health check: http://localhost:${PORT}/api/health`);
+    console.log(` Client URL: ${CLIENT_URL}`);
+    console.log(` Gemini Model: ${process.env.GEMINI_MODEL || 'gemini-2.5-flash'}`);
+    console.log(` Gemini Key: ${process.env.GEMINI_API_KEY ? 'Configured' : 'Local Fallback Mode'}`);
+    console.log(`===============================================`);
   });
-});
+
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received: closing HTTP server');
+    if (server) {
+      server.close(() => {
+        console.log('HTTP server closed');
+      });
+    }
+  });
+}
 
 export default app;

@@ -1,0 +1,22 @@
+# Server Dependencies
+node_modules/
+
+# Server Environment Variables & Keys
+.env
+.env*
+*.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Allow template example
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / Editor files
+.DS_Store
+Thumbs.db

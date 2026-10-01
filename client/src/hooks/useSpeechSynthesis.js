@@ -430,6 +430,7 @@ export function useSpeechSynthesis() {
     isPaused,
     isSupported,
     spokenCharIndex,
+    setSpokenCharIndex,
     currentText,
     voices,
     speechRate,

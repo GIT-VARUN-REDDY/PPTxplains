@@ -395,18 +395,35 @@ export const presentations = {
 }
 };
 
+const MAX_CUSTOM_PRESENTATIONS = 50;
+const customPresentationKeys = [];
+
+function safeUpgradeSvgImage(imageStr) {
+  if (!imageStr || typeof imageStr !== 'string' || !imageStr.startsWith('data:image/svg+xml;utf8,')) {
+    return imageStr;
+  }
+  try {
+    const raw = imageStr.replace('data:image/svg+xml;utf8,', '');
+    let svgContent;
+    try {
+      svgContent = decodeURIComponent(raw).replace(/&bull;/g, '&#8226;');
+    } catch {
+      // If decodeURIComponent fails on unescaped %, use raw with unescape
+      svgContent = unescape(raw).replace(/&bull;/g, '&#8226;');
+    }
+    return `data:image/svg+xml;base64,${Buffer.from(svgContent, 'utf-8').toString('base64')}`;
+  } catch (err) {
+    console.warn('[safeUpgradeSvgImage] Notice:', err.message);
+    return imageStr;
+  }
+}
+
 export const getPresentation = (id) => {
   const pres = presentations[id] || null;
   if (!pres || !pres.slides) return pres;
   pres.slides.forEach((s) => {
     if (s.image && s.image.startsWith('data:image/svg+xml;utf8,')) {
-      try {
-        const svgContent = decodeURIComponent(s.image.replace('data:image/svg+xml;utf8,', ''))
-          .replace(/&bull;/g, '&#8226;');
-        s.image = `data:image/svg+xml;base64,${Buffer.from(svgContent, 'utf-8').toString('base64')}`;
-      } catch (err) {
-        console.warn('[getPresentation] Error upgrading SVG data URI:', err);
-      }
+      s.image = safeUpgradeSvgImage(s.image);
     }
   });
   return pres;
@@ -417,16 +434,20 @@ export const saveCustomPresentation = (pres) => {
   if (pres.slides) {
     pres.slides.forEach((s) => {
       if (s.image && s.image.startsWith('data:image/svg+xml;utf8,')) {
-        try {
-          const svgContent = decodeURIComponent(s.image.replace('data:image/svg+xml;utf8,', ''))
-            .replace(/&bull;/g, '&#8226;');
-          s.image = `data:image/svg+xml;base64,${Buffer.from(svgContent, 'utf-8').toString('base64')}`;
-        } catch (err) {
-          console.warn('[saveCustomPresentation] Error upgrading SVG data URI:', err);
-        }
+        s.image = safeUpgradeSvgImage(s.image);
       }
     });
   }
+
+  // Manage in-memory capacity to prevent heap exhaustion
+  if (customPresentationKeys.length >= MAX_CUSTOM_PRESENTATIONS) {
+    const oldestKey = customPresentationKeys.shift();
+    if (oldestKey && presentations[oldestKey]) {
+      delete presentations[oldestKey];
+    }
+  }
+
+  customPresentationKeys.push(pres.id);
   presentations[pres.id] = pres;
   return pres;
 };
