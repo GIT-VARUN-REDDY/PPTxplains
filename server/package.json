@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "install:all": "npm install && cd ../client && npm install",
+    "build": "cd ../client && npm run build"
   },
   "dependencies": {
     "@google/genai": "^2.24.0",
