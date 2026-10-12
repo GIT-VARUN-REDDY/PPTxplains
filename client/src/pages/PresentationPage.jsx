@@ -630,6 +630,7 @@ export function PresentationPage({
         durationSec={durationSec}
         currentSlideIndex={currentSlideIndex}
         totalSlides={totalSlides}
+        slides={presentation?.slides}
         isVoiceSynced={autoNarrate}
         currentSlideDurationSec={currentSlideDurationSec}
         laserActive={laserActive}

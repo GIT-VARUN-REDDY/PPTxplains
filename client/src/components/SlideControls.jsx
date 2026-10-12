@@ -21,6 +21,7 @@ function SlideControlsComponent({
   durationSec,
   currentSlideIndex,
   totalSlides,
+  slides = [],
   isVoiceSynced = false,
   currentSlideDurationSec,
   laserActive = false,
@@ -63,6 +64,13 @@ function SlideControlsComponent({
     onSpeechRateChange?.(nextRate);
   };
 
+  // Compute hovered slide info for rich scrubber tooltip
+  const hoveredSlideIndex = hoverPct !== null && totalSlides > 0
+    ? Math.min(totalSlides - 1, Math.max(0, Math.floor((hoverPct / 100) * totalSlides)))
+    : null;
+  const hoveredSlide = hoveredSlideIndex !== null ? slides[hoveredSlideIndex] : null;
+  const hoveredSlideTitle = hoveredSlide?.title || hoveredSlide?.heading || (hoveredSlideIndex !== null ? `Slide ${hoveredSlideIndex + 1}` : '');
+
   return (
     <footer
       style={{
@@ -87,8 +95,8 @@ function SlideControlsComponent({
         }}
         style={{
           width: '100%',
-          height: isHovered ? '9px' : '5px',
-          backgroundColor: 'rgba(30, 41, 59, 0.8)',
+          height: isHovered ? '10px' : '5px',
+          backgroundColor: '#0a1128',
           position: 'relative',
           cursor: 'pointer',
           transition: 'height 160ms cubic-bezier(0.2, 0.8, 0.2, 1)',
@@ -96,6 +104,23 @@ function SlideControlsComponent({
         }}
         title={`Click anywhere to seek & continue explanation (${Math.round(progress)}%)`}
       >
+        {/* Subtle slide boundary tick dividers */}
+        {totalSlides > 1 && Array.from({ length: totalSlides - 1 }).map((_, i) => (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: `${((i + 1) / totalSlides) * 100}%`,
+              width: '1px',
+              backgroundColor: 'rgba(255, 255, 255, 0.18)',
+              zIndex: 2,
+              pointerEvents: 'none'
+            }}
+          />
+        ))}
+
         {/* Hover preview fill */}
         {isHovered && hoverPct !== null && (
           <div
@@ -105,8 +130,9 @@ function SlideControlsComponent({
               left: 0,
               height: '100%',
               width: `${hoverPct}%`,
-              backgroundColor: 'rgba(56, 189, 248, 0.25)',
-              pointerEvents: 'none'
+              backgroundColor: 'rgba(59, 130, 246, 0.25)',
+              pointerEvents: 'none',
+              zIndex: 1
             }}
           />
         )}
@@ -116,12 +142,13 @@ function SlideControlsComponent({
           style={{
             height: '100%',
             width: `${Math.min(100, Math.max(0, Number(progress) || 0))}%`,
-            background: 'var(--accent-gradient)',
+            background: 'var(--accent-gradient, linear-gradient(135deg, #2563eb, #3b82f6))',
             transition: isPlaying
               ? 'none'
               : 'width 240ms cubic-bezier(0.2, 0.8, 0.2, 1)',
-            boxShadow: '0 0 12px rgba(56, 189, 248, 0.85)',
+            boxShadow: '0 0 12px rgba(59, 130, 246, 0.85)',
             position: 'relative',
+            zIndex: 3,
             willChange: 'width'
           }}
         />
@@ -133,12 +160,13 @@ function SlideControlsComponent({
             left: `${Math.min(100, Math.max(0, Number(progress) || 0))}%`,
             top: '50%',
             transform: 'translate(-50%, -50%)',
-            width: isHovered ? '13px' : '9px',
-            height: isHovered ? '13px' : '9px',
+            width: isHovered ? '14px' : '9px',
+            height: isHovered ? '14px' : '9px',
             borderRadius: '50%',
             backgroundColor: '#ffffff',
-            boxShadow: '0 0 8px #38bdf8, 0 0 16px rgba(56, 189, 248, 0.9)',
+            boxShadow: '0 0 10px #3b82f6, 0 0 20px rgba(59, 130, 246, 0.9)',
             pointerEvents: 'none',
+            zIndex: 4,
             transition: isPlaying
               ? 'width 140ms ease, height 140ms ease'
               : 'left 240ms cubic-bezier(0.2, 0.8, 0.2, 1), width 140ms ease, height 140ms ease',
@@ -146,28 +174,39 @@ function SlideControlsComponent({
           }}
         />
 
-        {/* Hover Tooltip showing target percentage */}
+        {/* Hover Rich Tooltip showing Slide title and target seek percentage */}
         {isHovered && hoverPct !== null && (
           <div
             style={{
               position: 'absolute',
-              left: `${hoverPct}%`,
-              bottom: '14px',
+              left: `${Math.min(94, Math.max(6, hoverPct))}%`,
+              bottom: '16px',
               transform: 'translateX(-50%)',
-              backgroundColor: '#0c1626',
-              border: '1px solid rgba(56, 189, 248, 0.5)',
-              borderRadius: '6px',
-              padding: '2px 8px',
+              backgroundColor: '#0a1128',
+              border: '1px solid rgba(59, 130, 246, 0.55)',
+              borderRadius: '7px',
+              padding: '4px 10px',
               fontSize: '11px',
               fontWeight: '600',
-              color: '#38bdf8',
+              color: '#ffffff',
               whiteSpace: 'nowrap',
-              boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.75)',
               pointerEvents: 'none',
-              zIndex: 30
+              zIndex: 30,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
             }}
           >
-            Seek to {Math.round(hoverPct)}%
+            <span style={{ color: '#93c5fd' }}>
+              Slide {hoveredSlideIndex !== null ? hoveredSlideIndex + 1 : ''}:
+            </span>
+            <span style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {hoveredSlideTitle}
+            </span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '10px' }}>
+              ({Math.round(hoverPct)}%)
+            </span>
           </div>
         )}
       </div>
@@ -210,7 +249,7 @@ function SlideControlsComponent({
             title={laserActive ? "Laser Pointer ON (Press 'L' to toggle)" : "Presenter Laser Pointer (Press 'L')"}
             aria-label="Toggle Laser Pointer"
           >
-            <Crosshair size={13} style={{ color: laserActive ? '#060b14' : 'var(--accent-cyan)' }} />
+            <Crosshair size={13} style={{ color: laserActive ? '#ffffff' : 'var(--accent-primary, #3b82f6)' }} />
             <span className="hide-on-mobile">{laserActive ? 'Laser ON' : 'Laser (L)'}</span>
           </button>
 
@@ -229,7 +268,7 @@ function SlideControlsComponent({
               title={isNotesOpen ? "Presenter Notes ON (Press 'P' to close)" : "Speaker Notes & Teleprompter (Press 'P')"}
               aria-label="Toggle Presenter Notes"
             >
-              <BookOpen size={13} style={{ color: isNotesOpen ? '#060b14' : 'var(--accent-cyan)' }} />
+              <BookOpen size={13} style={{ color: isNotesOpen ? '#ffffff' : 'var(--accent-primary, #3b82f6)' }} />
               <span className="hide-on-mobile">{isNotesOpen ? 'Notes ON' : 'Notes (P)'}</span>
             </button>
           )}
@@ -245,9 +284,9 @@ function SlideControlsComponent({
                   borderRadius: '3px',
                   backgroundColor:
                     idx === currentSlideIndex
-                      ? 'var(--accent-cyan)'
+                      ? 'var(--accent-primary, #3b82f6)'
                       : idx < currentSlideIndex
-                      ? 'var(--accent-indigo)'
+                      ? '#1d4ed8'
                       : 'var(--border-subtle)',
                   transition: 'all 200ms ease'
                 }}
@@ -340,10 +379,10 @@ function SlideControlsComponent({
                 padding: '4px 8px',
                 height: '30px',
                 borderRadius: '6px',
-                backgroundColor: speechRate !== 1.0 ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                backgroundColor: speechRate !== 1.0 ? 'rgba(59, 130, 246, 0.18)' : 'rgba(255, 255, 255, 0.05)',
                 border: '1px solid',
-                borderColor: speechRate !== 1.0 ? 'rgba(56, 189, 248, 0.35)' : 'var(--border-subtle)',
-                color: speechRate !== 1.0 ? '#38bdf8' : 'var(--text-secondary)',
+                borderColor: speechRate !== 1.0 ? 'rgba(59, 130, 246, 0.45)' : 'var(--border-subtle)',
+                color: speechRate !== 1.0 ? '#93c5fd' : 'var(--text-secondary)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '4px'
@@ -359,14 +398,14 @@ function SlideControlsComponent({
           {/* Feature 5: Voice Selector */}
           {voices && voices.length > 0 && onVoiceChange && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }} className="hide-on-mobile">
-              <Mic size={12} style={{ color: 'var(--accent-primary, #06b6d4)' }} />
+              <Mic size={12} style={{ color: 'var(--accent-primary, #3b82f6)' }} />
               <select
                 value={selectedVoiceURI}
                 onChange={(e) => onVoiceChange(e.target.value)}
                 style={{
                   backgroundColor: 'var(--bg-surface-elevated)',
-                  color: 'var(--accent-primary, #06b6d4)',
-                  border: '1px solid rgba(6,182,212,0.45)',
+                  color: '#93c5fd',
+                  border: '1px solid rgba(59, 130, 246, 0.45)',
                   borderRadius: 'var(--radius-sm)',
                   padding: '3px 6px',
                   fontSize: '11px',
