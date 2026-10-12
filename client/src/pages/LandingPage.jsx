@@ -26,23 +26,21 @@ export function LandingPage({ onStartPresentation }) {
         top: 0,
         left: 0,
         width: '100%',
-        padding: 'clamp(16px, 2.5vw, 28px) clamp(16px, 5vw, 48px)',
+        minHeight: '64px',
+        padding: '16px clamp(16px, 5vw, 48px)',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         zIndex: 50,
-        background: scrollY > 40 ? 'rgba(2, 4, 8, 0.85)' : 'transparent',
-        backdropFilter: scrollY > 40 ? 'blur(16px)' : 'none',
-        transition: 'all 0.3s ease',
-        borderBottom: scrollY > 40 ? '1px solid rgba(255, 255, 255, 0.07)' : '1px solid transparent'
+        background: 'rgba(1, 2, 4, 0.85)',
+        backdropFilter: 'blur(16px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
+        boxSizing: 'border-box'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Sparkles size={18} color="#38bdf8" />
-          <span style={{ fontSize: 'clamp(11px, 1.8vw, 13px)', fontWeight: '800', letterSpacing: '3px', color: '#f8fafc', textTransform: 'uppercase' }}>
+          <span style={{ fontSize: '13px', fontWeight: '800', letterSpacing: '3px', color: '#f8fafc', textTransform: 'uppercase' }}>
             PPTxplains
-          </span>
-          <span style={{ fontSize: '10px', color: '#6366f1', letterSpacing: '1px', opacity: 0.8, marginLeft: '6px', display: 'inline-block' }}>
-            京都 / v2
           </span>
         </div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -52,13 +50,14 @@ export function LandingPage({ onStartPresentation }) {
               background: 'transparent',
               border: '1px solid rgba(56, 189, 248, 0.35)',
               color: '#38bdf8',
-              padding: 'clamp(8px, 1.5vw, 10px) clamp(14px, 2.5vw, 24px)',
+              padding: '8px 18px',
               borderRadius: '6px',
-              fontSize: 'clamp(11px, 1.6vw, 12px)',
+              fontSize: '11.5px',
               letterSpacing: '1px',
               textTransform: 'uppercase',
               cursor: 'pointer',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              whiteSpace: 'nowrap'
             }}
           >
             Upload Deck
@@ -75,7 +74,7 @@ export function LandingPage({ onStartPresentation }) {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          padding: 'clamp(100px, 16vh, 160px) clamp(20px, 6vw, 8vw) clamp(60px, 10vh, 100px)',
+          padding: 'clamp(130px, 20vh, 180px) clamp(20px, 6vw, 8vw) clamp(60px, 10vh, 100px)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
           boxSizing: 'border-box'
         }}>
