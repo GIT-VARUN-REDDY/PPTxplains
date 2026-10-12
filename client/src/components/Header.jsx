@@ -3,7 +3,6 @@ import {
   Maximize, 
   Minimize, 
   Share2, 
-  Grid, 
   Presentation, 
   ChevronLeft, 
   Check, 
@@ -13,7 +12,10 @@ import {
   PlayCircle,
   FileText,
   HelpCircle,
-  UploadCloud 
+  UploadCloud,
+  Moon,
+  Sun,
+  Keyboard
 } from 'lucide-react';
 
 function HeaderComponent({
@@ -28,7 +30,9 @@ function HeaderComponent({
   autoNarrate,
   onToggleAutoNarrate,
   onToggleFullscreen,
-  onOpenOverview,
+  isDimmed = false,
+  onToggleDimmer,
+  onOpenShortcuts,
   onOpenBrief,
   onOpenQuiz,
   onOpenUpload,
@@ -320,6 +324,38 @@ function HeaderComponent({
               <Share2 size={14} style={{ color: 'var(--text-secondary, #94a3b8)' }} />
             )}
           </button>
+
+          {/* Dimmer / Theater Focus Toggle */}
+          {onToggleDimmer && (
+            <button
+              onClick={onToggleDimmer}
+              className={`btn btn-ghost btn-icon ${isDimmed ? 'active' : ''}`}
+              style={{
+                height: '30px',
+                width: '30px',
+                borderRadius: '6px',
+                color: isDimmed ? 'var(--accent-primary, #3b82f6)' : 'var(--text-secondary, #94a3b8)',
+                backgroundColor: isDimmed ? 'rgba(59, 130, 246, 0.15)' : 'transparent'
+              }}
+              title={isDimmed ? 'Turn Off Dimmer (D)' : 'Turn On Cinema Dimmer (Focus spotlight on slide) (D)'}
+              aria-label="Toggle Cinema Dimmer"
+            >
+              <Moon size={14} />
+            </button>
+          )}
+
+          {/* Keyboard Shortcuts Sheet */}
+          {onOpenShortcuts && (
+            <button
+              onClick={onOpenShortcuts}
+              className="btn btn-ghost btn-icon hide-on-small-mobile"
+              style={{ height: '30px', width: '30px', borderRadius: '6px' }}
+              title="Keyboard Shortcuts Cheat Sheet (?)"
+              aria-label="Keyboard Shortcuts"
+            >
+              <Keyboard size={14} style={{ color: 'var(--text-secondary, #94a3b8)' }} />
+            </button>
+          )}
 
           {/* Fullscreen */}
           <button

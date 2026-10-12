@@ -387,6 +387,54 @@ function AIDoubtPanelComponent({
               <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border-subtle)' }} />
             </div>
 
+            {/* Context-aware Suggested Questions */}
+            {currentSlide && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <span style={{ fontSize: '11px', fontWeight: '700', color: '#93c5fd', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Sparkles size={12} style={{ color: '#3b82f6' }} />
+                  Suggested Questions:
+                </span>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {[
+                    `Can you explain "${currentSlide.title || 'this concept'}" in simpler terms?`,
+                    `What is the key business takeaway from this slide?`,
+                    currentSlide.metrics && currentSlide.metrics.length > 0 
+                      ? `How were these metrics benchmarked?` 
+                      : `Can you give a practical real-world example?`
+                  ].map((suggestion, sIdx) => (
+                    <button
+                      key={sIdx}
+                      type="button"
+                      onClick={() => onSubmitDoubt(suggestion, { fromVoice: false })}
+                      disabled={isThinking}
+                      style={{
+                        fontSize: '11px',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        backgroundColor: 'rgba(59, 130, 246, 0.08)',
+                        border: '1px solid rgba(59, 130, 246, 0.25)',
+                        color: '#ffffff',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 150ms ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.2)';
+                        e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.08)';
+                        e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.25)';
+                      }}
+                      title="Click to ask this question"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* 2. Text Doubt Section */}
             <TextInput
               isThinking={isThinking}

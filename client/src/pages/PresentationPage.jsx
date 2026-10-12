@@ -7,6 +7,7 @@ import { SlideThumbnailsDrawer } from '../components/SlideThumbnailsDrawer.jsx';
 import { ExecutiveBriefModal } from '../components/ExecutiveBriefModal.jsx';
 import { KnowledgeCheckModal } from '../components/KnowledgeCheckModal.jsx';
 import { UploadPresentationModal } from '../components/UploadPresentationModal.jsx';
+import { KeyboardShortcutsModal } from '../components/KeyboardShortcutsModal.jsx';
 import { usePresentation } from '../hooks/usePresentation.js';
 import { useSpeechSynthesis, estimateSpeechDurationSec, cleanTextForSpeech } from '../hooks/useSpeechSynthesis.js';
 import { useAIDoubt } from '../hooks/useAIDoubt.js';
@@ -22,6 +23,8 @@ export function PresentationPage({
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+  const [isDimmed, setIsDimmed] = useState(false);
   const [showSubtitles, setShowSubtitles] = useState(true);
   const [autoNarrate, setAutoNarrate] = useState(false);
   const [autoSlide, setAutoSlide] = useState(true); // Auto-advance slides upon completion
@@ -489,6 +492,12 @@ export function PresentationPage({
       } else if (e.key === 'p' || e.key === 'P') {
         e.preventDefault();
         setIsNotesOpen((prev) => !prev);
+      } else if (e.key === 'd' || e.key === 'D') {
+        e.preventDefault();
+        setIsDimmed((prev) => !prev);
+      } else if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+        e.preventDefault();
+        setIsShortcutsOpen((prev) => !prev);
       } else if (e.key === 't' || e.key === 'T' || e.key === 'o' || e.key === 'O' || e.key === 'g' || e.key === 'G') {
         e.preventDefault();
         setIsDrawerOpen((prev) => !prev);
@@ -498,6 +507,8 @@ export function PresentationPage({
         setIsQuizOpen(false);
         setIsNotesOpen(false);
         setIsUploadOpen(false);
+        setIsShortcutsOpen(false);
+        setIsDimmed(false);
       }
     };
 
@@ -573,6 +584,9 @@ export function PresentationPage({
           }
         }}
         onToggleFullscreen={toggleFullscreen}
+        isDimmed={isDimmed}
+        onToggleDimmer={() => setIsDimmed((prev) => !prev)}
+        onOpenShortcuts={() => handleOpenModal(setIsShortcutsOpen)}
         onOpenBrief={() => handleOpenModal(setIsBriefOpen)}
         onOpenQuiz={() => handleOpenModal(setIsQuizOpen)}
         onOpenUpload={() => handleOpenModal(setIsUploadOpen)}
@@ -580,7 +594,7 @@ export function PresentationPage({
       />
 
       {/* Main Presentation Stage & AI Doubt Assistant Split Layout */}
-      <main className="presentation-workspace">
+      <main className={`presentation-workspace ${isDimmed ? 'cinema-dimmed' : ''}`}>
         {/* Left: Presentation Slide Stage with Synchronized Movie Subtitles */}
         <SlideViewer
           slide={currentSlide}
@@ -700,6 +714,12 @@ export function PresentationPage({
         onSuccess={(newId) => {
           window.location.href = `/presentation/${newId}`;
         }}
+      />
+
+      {/* Keyboard Shortcuts Cheat Sheet Modal */}
+      <KeyboardShortcutsModal
+        isOpen={isShortcutsOpen}
+        onClose={() => setIsShortcutsOpen(false)}
       />
     </div>
   );
