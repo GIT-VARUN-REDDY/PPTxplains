@@ -37,11 +37,18 @@ export function LandingPage({ onStartPresentation }) {
         borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
         boxSizing: 'border-box'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Sparkles size={18} color="#3b82f6" />
-          <span style={{ fontSize: '13px', fontWeight: '800', letterSpacing: '3px', color: '#ffffff', textTransform: 'uppercase' }}>
-            PPTxplains
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <img 
+            src="/pptxplains-logo.png" 
+            alt="PPTxplains" 
+            style={{ 
+              height: '34px', 
+              width: 'auto', 
+              objectFit: 'contain',
+              display: 'block',
+              filter: 'drop-shadow(0 0 12px rgba(59, 130, 246, 0.45))'
+            }} 
+          />
         </div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <button

@@ -80,23 +80,30 @@ function HeaderComponent({
           </button>
         )}
 
-        {/* Executive Deck Brand Icon (hidden on small mobile to save space) */}
+        {/* Executive Deck Brand Logo */}
         <div
           className="hide-on-small-mobile"
           style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '8px',
-            background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.16) 0%, rgba(59, 130, 246, 0.16) 100%)',
-            border: '1px solid rgba(6, 182, 212, 0.32)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'var(--accent-primary, #06b6d4)',
-            flexShrink: 0
+            flexShrink: 0,
+            cursor: onBackToHome ? 'pointer' : 'default'
           }}
+          onClick={onBackToHome}
+          title="PPTxplains"
         >
-          <Presentation size={17} />
+          <img
+            src="/pptxplains-logo.png"
+            alt="PPTxplains"
+            style={{
+              height: '24px',
+              width: 'auto',
+              objectFit: 'contain',
+              display: 'block',
+              filter: 'drop-shadow(0 0 8px rgba(59, 130, 246, 0.45))'
+            }}
+          />
         </div>
 
         {/* Title & Integrated Slide Pill */}
