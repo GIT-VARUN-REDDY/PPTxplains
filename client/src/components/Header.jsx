@@ -245,25 +245,6 @@ function HeaderComponent({
 
         {/* Cluster 2: Workspace Tools */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          {/* Slides Grid Overview */}
-          <button
-            onClick={onOpenOverview}
-            className="btn btn-secondary"
-            style={{
-              fontSize: '12px',
-              padding: '5px 8px',
-              height: '30px',
-              gap: '5px',
-              backgroundColor: 'var(--bg-surface-elevated, #111827)',
-              border: '1px solid var(--border-subtle, rgba(255,255,255,0.08))'
-            }}
-            title="View All Slides Grid (O or G)"
-            aria-label="View All Slides Grid"
-          >
-            <Grid size={13} style={{ color: 'var(--text-secondary, #94a3b8)' }} />
-            <span className="hide-on-mobile">Slides</span>
-          </button>
-
           {/* Executive Brief (hidden on small mobile) */}
           {onOpenBrief && (
             <button

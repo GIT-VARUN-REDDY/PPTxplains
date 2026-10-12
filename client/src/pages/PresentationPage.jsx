@@ -3,7 +3,6 @@ import { Header } from '../components/Header.jsx';
 import { SlideViewer } from '../components/SlideViewer.jsx';
 import { SlideControls } from '../components/SlideControls.jsx';
 import { AIDoubtPanel } from '../components/AIDoubtPanel.jsx';
-import { SlideOverviewModal } from '../components/SlideOverviewModal.jsx';
 import { SlideThumbnailsDrawer } from '../components/SlideThumbnailsDrawer.jsx';
 import { ExecutiveBriefModal } from '../components/ExecutiveBriefModal.jsx';
 import { KnowledgeCheckModal } from '../components/KnowledgeCheckModal.jsx';
@@ -18,7 +17,6 @@ export function PresentationPage({
   onBackToHome
 }) {
   const containerRef = useRef(null);
-  const [isOverviewOpen, setIsOverviewOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isBriefOpen, setIsBriefOpen] = useState(false);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
@@ -491,11 +489,11 @@ export function PresentationPage({
       } else if (e.key === 'p' || e.key === 'P') {
         e.preventDefault();
         setIsNotesOpen((prev) => !prev);
-      } else if (e.key === 'o' || e.key === 'O' || e.key === 'g' || e.key === 'G') {
+      } else if (e.key === 't' || e.key === 'T' || e.key === 'o' || e.key === 'O' || e.key === 'g' || e.key === 'G') {
         e.preventDefault();
-        setIsOverviewOpen((prev) => !prev);
+        setIsDrawerOpen((prev) => !prev);
       } else if (e.key === 'Escape') {
-        setIsOverviewOpen(false);
+        setIsDrawerOpen(false);
         setIsBriefOpen(false);
         setIsQuizOpen(false);
         setIsNotesOpen(false);
@@ -575,7 +573,6 @@ export function PresentationPage({
           }
         }}
         onToggleFullscreen={toggleFullscreen}
-        onOpenOverview={() => handleOpenModal(setIsOverviewOpen)}
         onOpenBrief={() => handleOpenModal(setIsBriefOpen)}
         onOpenQuiz={() => handleOpenModal(setIsQuizOpen)}
         onOpenUpload={() => handleOpenModal(setIsUploadOpen)}
@@ -678,17 +675,6 @@ export function PresentationPage({
           handleGoToSlide(idx);
         }}
         onClose={() => setIsDrawerOpen(false)}
-      />
-
-      {/* Slide Overview Grid Modal */}
-      <SlideOverviewModal
-        isOpen={isOverviewOpen}
-        slides={presentation?.slides}
-        currentSlideIndex={currentSlideIndex}
-        onSelectSlide={(idx) => {
-          handleGoToSlide(idx);
-        }}
-        onClose={() => setIsOverviewOpen(false)}
       />
 
       {/* Executive Brief & Q&A Report Modal */}
