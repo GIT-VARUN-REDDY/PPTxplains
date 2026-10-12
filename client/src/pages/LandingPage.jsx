@@ -49,42 +49,86 @@ export function LandingPage({ onStartPresentation }) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const containerRef = useRef(null);
   const [activeStep, setActiveStep] = useState(0); // 0, 1, 2
-  const [scrollProgress, setScrollProgress] = useState(0); // 0.0 to 1.0
+  const isTransitioningRef = useRef(false);
 
+  // Wheel listener: directly switches chapters smoothly when user spins mouse wheel / trackpad
   useEffect(() => {
-    const handleScroll = () => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const totalScrollable = containerRef.current.scrollHeight - window.innerHeight;
-      if (totalScrollable <= 0) return;
+    let wheelDeltaAccumulator = 0;
+    const WHEEL_THRESHOLD = 80;
 
-      const currentScrolled = Math.max(0, -rect.top);
-      const progress = Math.min(1, Math.max(0, currentScrolled / totalScrollable));
-      setScrollProgress(progress);
+    const handleWheel = (e) => {
+      // Accumulate delta
+      wheelDeltaAccumulator += e.deltaY;
 
-      // Determine active chapter based on progress thresholds
-      // 0.00 - 0.33 -> Chapter 0
-      // 0.33 - 0.67 -> Chapter 1
-      // 0.67 - 1.00 -> Chapter 2
-      if (progress < 0.33) {
-        setActiveStep(0);
-      } else if (progress < 0.67) {
-        setActiveStep(1);
-      } else {
-        setActiveStep(2);
+      if (Math.abs(wheelDeltaAccumulator) >= WHEEL_THRESHOLD && !isTransitioningRef.current) {
+        if (wheelDeltaAccumulator > 0) {
+          // Scroll down / next chapter
+          setActiveStep((prev) => {
+            const next = Math.min(CHAPTERS.length - 1, prev + 1);
+            return next;
+          });
+        } else {
+          // Scroll up / prev chapter
+          setActiveStep((prev) => {
+            const next = Math.max(0, prev - 1);
+            return next;
+          });
+        }
+        wheelDeltaAccumulator = 0;
+        isTransitioningRef.current = true;
+        setTimeout(() => {
+          isTransitioningRef.current = false;
+        }, 550);
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    // Touch swipe support for mobile / tablets
+    let touchStartY = 0;
+    const handleTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+    };
+    const handleTouchEnd = (e) => {
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffY = touchStartY - touchEndY;
+      if (Math.abs(diffY) > 40 && !isTransitioningRef.current) {
+        if (diffY > 0) {
+          setActiveStep((prev) => Math.min(CHAPTERS.length - 1, prev + 1));
+        } else {
+          setActiveStep((prev) => Math.max(0, prev - 1));
+        }
+        isTransitioningRef.current = true;
+        setTimeout(() => {
+          isTransitioningRef.current = false;
+        }, 550);
+      }
+    };
+
+    // Keyboard arrow keys up/down/pageUp/pageDown
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault();
+        setActiveStep((prev) => Math.min(CHAPTERS.length - 1, prev + 1));
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault();
+        setActiveStep((prev) => Math.max(0, prev - 1));
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const scrollToStep = (stepIndex) => {
-    if (!containerRef.current) return;
-    const totalScrollable = containerRef.current.scrollHeight - window.innerHeight;
-    const targetY = containerRef.current.offsetTop + (stepIndex / 2) * totalScrollable;
-    window.scrollTo({ top: targetY, behavior: 'smooth' });
+    setActiveStep(stepIndex);
   };
 
   return (
@@ -93,7 +137,8 @@ export function LandingPage({ onStartPresentation }) {
       style={{
         position: 'relative',
         width: '100%',
-        height: '350vh', // Tall virtual scroll track
+        height: '100vh',
+        overflow: 'hidden',
         backgroundColor: '#010204',
         boxSizing: 'border-box'
       }}
@@ -182,18 +227,15 @@ export function LandingPage({ onStartPresentation }) {
       {/* STATIC PINNED VIEWPORT: The page NEVER moves down; text transitions in place */}
       <div
         style={{
-          position: 'sticky',
-          top: 0,
-          left: 0,
+          position: 'relative',
           width: '100%',
-          height: '100vh',
+          height: '100%',
           zIndex: 20,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           padding: 'clamp(80px, 12vh, 120px) clamp(24px, 7vw, 10vw)',
-          boxSizing: 'border-box',
-          pointerEvents: 'none' // allow scroll through to window
+          boxSizing: 'border-box'
         }}
       >
         {/* Right Lateral Chapter Progress Indicator */}
