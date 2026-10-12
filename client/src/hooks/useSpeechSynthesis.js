@@ -48,6 +48,9 @@ export function estimateSpeechDurationSec(text, rate = 1.0) {
   return Math.max(5, Math.round(clean.length / charsPerSec));
 }
 
+// Client-side in-memory audio Blob cache for instantaneous re-play without network roundtrip
+const clientAudioCache = new Map();
+
 export function useSpeechSynthesis() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -108,6 +111,32 @@ export function useSpeechSynthesis() {
     setSelectedVoiceURIState(voiceURI);
     if (typeof window !== 'undefined') {
       localStorage.setItem('pptx_speech_voice', voiceURI);
+    }
+  }, []);
+
+  // Pre-fetch next slide audio in the background so it plays instantly when navigating
+  const prefetchSpeech = useCallback(async (text, voiceURI = null) => {
+    if (!text || typeof window === 'undefined') return;
+    const clean = cleanTextForSpeech(text);
+    if (!clean) return;
+    const chosen = voiceURI || selectedVoiceURIRef.current || 'neural:en-US-GuyNeural';
+    const rate = speechRateRef.current || 1.0;
+    const rawVoice = chosen.replace(/^neural:/, '');
+    const cacheKey = `${rawVoice}:${rate}:${clean}`;
+    if (clientAudioCache.has(cacheKey)) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/tts/speak`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: clean, voice: rawVoice, rate })
+      });
+      if (res.ok) {
+        const blob = await res.blob();
+        clientAudioCache.set(cacheKey, blob);
+      }
+    } catch {
+      // Background prefetch is best-effort
     }
   }, []);
 
@@ -254,30 +283,46 @@ export function useSpeechSynthesis() {
     if (isNeural) {
       try {
         const rawVoiceId = chosenVoiceURI.replace(/^neural:/, '');
+        const cacheKey = `${rawVoiceId}:${activeRate}:${fullSpokenText}`;
 
         setIsSpeaking(true);
         setIsPaused(false);
 
-        // Fetch Studio Neural MP3 from server
-        const response = await fetch(`${API_BASE}/tts/speak`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          signal: controller.signal,
-          body: JSON.stringify({
-            text: fullSpokenText,
-            voice: rawVoiceId,
-            rate: activeRate
-          })
-        });
+        let audioBlob = clientAudioCache.get(cacheKey);
 
-        if (!response.ok) {
-          throw new Error(`TTS server returned status ${response.status}`);
+        if (!audioBlob) {
+          // Fast fetch with 2.5s hard timeout so the user NEVER sits waiting on slow networks
+          const timeoutId = setTimeout(() => controller.abort(), 2500);
+
+          try {
+            const response = await fetch(`${API_BASE}/tts/speak`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              signal: controller.signal,
+              body: JSON.stringify({
+                text: fullSpokenText,
+                voice: rawVoiceId,
+                rate: activeRate
+              })
+            });
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+              throw new Error(`TTS server returned status ${response.status}`);
+            }
+
+            if (!isPlayingRef.current || controller.signal.aborted) return;
+            audioBlob = await response.blob();
+            if (audioBlob) {
+              clientAudioCache.set(cacheKey, audioBlob);
+            }
+          } catch (fetchErr) {
+            clearTimeout(timeoutId);
+            throw fetchErr;
+          }
         }
 
-        if (!isPlayingRef.current || controller.signal.aborted) return; // User stopped/switched while fetching
-
-        const audioBlob = await response.blob();
-        if (!isPlayingRef.current || controller.signal.aborted) return;
+        if (!isPlayingRef.current || controller.signal.aborted || !audioBlob) return;
 
         const audioUrl = URL.createObjectURL(audioBlob);
         audioUrlRef.current = audioUrl;
@@ -330,29 +375,29 @@ export function useSpeechSynthesis() {
         };
 
         audio.onerror = (e) => {
-          if (!isPlayingRef.current || controller.signal.aborted) return;
-          console.warn('[Neural Audio] playback error, falling back to Web Speech:', e);
+          if (!isPlayingRef.current) return;
+          console.warn('[Neural Audio] playback error, falling back immediately to Web Speech:', e);
           fallbackWebSpeech();
         };
 
         try {
           await audio.play();
         } catch (playErr) {
-          if (playErr.name === 'AbortError' || !isPlayingRef.current || controller.signal.aborted) return;
+          if (playErr.name === 'AbortError' || !isPlayingRef.current) return;
           console.warn('[Neural Audio] play() error, falling back to Web Speech:', playErr);
           fallbackWebSpeech();
         }
         return;
       } catch (neuralErr) {
-        if (neuralErr.name === 'AbortError' || !isPlayingRef.current || controller.signal.aborted) {
-          return; // Intentional stop or abort
+        if (!isPlayingRef.current) {
+          return; // Intentional stop
         }
-        console.warn('[Neural TTS] Server call failed, falling back to local Web Speech API:', neuralErr.message);
+        // If network timed out (>2.5s) or server had error, immediately speak via browser TTS with 0 delay!
+        console.warn('[Neural TTS] Server fetch slow/failed, falling back immediately to local Web Speech API:', neuralErr.message);
         fallbackWebSpeech();
         return;
       }
     } else {
-      // Local device voice selected explicitly
       fallbackWebSpeech();
     }
 
@@ -439,6 +484,7 @@ export function useSpeechSynthesis() {
     selectedVoiceURI,
     setSelectedVoiceURI,
     speak,
+    prefetchSpeech,
     seekToPercent,
     stopSpeaking,
     pauseSpeaking,

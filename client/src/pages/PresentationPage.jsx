@@ -82,11 +82,23 @@ export function PresentationPage({
     selectedVoiceURI,
     setSelectedVoiceURI,
     speak,
+    prefetchSpeech,
     seekToPercent,
     stopSpeaking,
     pauseSpeaking,
     resumeSpeaking
   } = useSpeechSynthesis();
+
+  // Prefetch upcoming slide speech in background so slide transitions speak instantly
+  useEffect(() => {
+    if (presentation?.slides && currentSlideIndex < presentation.slides.length - 1) {
+      const nextSlideObj = presentation.slides[currentSlideIndex + 1];
+      const nextText = nextSlideObj?.narration || nextSlideObj?.context;
+      if (nextText) {
+        prefetchSpeech(nextText);
+      }
+    }
+  }, [currentSlideIndex, presentation, prefetchSpeech]);
 
   const speechRateRef = useRef(speechRate);
   speechRateRef.current = speechRate;
@@ -198,22 +210,24 @@ export function PresentationPage({
       progressAnimFrameRef.current = requestAnimationFrame(updateSmoothProgress);
     };
 
-    startProgressLoop(totalDurationMs);
-
     // If only updating timeline (audio already seeked directly via seekToPercent):
     if (onlyTimeline) {
+      startProgressLoop(totalDurationMs);
       spokenCharIndexRef.current = targetCharIndex;
       setSpokenCharIndex(targetCharIndex);
       return;
     }
 
+    // Initialize progress bar at starting point, but DO NOT advance until audio actually starts playing!
+    setProgress(clampedStartPct);
+
     speak(textToSpeak, {
       rate: currentRate,
       startCharOffset: targetCharIndex,
       onStart: ({ duration }) => {
-        if (duration && duration > 0) {
-          startProgressLoop(duration * 1000);
-        }
+        // Audio has ACTUALLY started speaking! Start progress loop now so the bar and speech are 100% in sync
+        const resolvedDurationMs = (duration && duration > 0) ? duration * 1000 : totalDurationMs;
+        startProgressLoop(resolvedDurationMs);
       },
       onBoundary: (charIndex) => {
         spokenCharIndexRef.current = charIndex;
