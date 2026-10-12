@@ -114,12 +114,12 @@ export function ExecutiveBriefModal({
           width: '100%',
           maxWidth: '860px',
           maxHeight: '90vh',
-          backgroundColor: '#0c1424',
-          border: '1px solid rgba(56, 189, 248, 0.25)',
+          backgroundColor: '#0a1128',
+          border: '1px solid rgba(59, 130, 246, 0.35)',
           borderRadius: '16px',
           display: 'flex',
           flexDirection: 'column',
-          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(56, 189, 248, 0.15)',
+          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(59, 130, 246, 0.15)',
           overflow: 'hidden'
         }}
         onClick={(e) => e.stopPropagation()}
@@ -132,7 +132,7 @@ export function ExecutiveBriefModal({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            backgroundColor: '#0f192c'
+            backgroundColor: '#070d1e'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -141,11 +141,11 @@ export function ExecutiveBriefModal({
                 width: '32px',
                 height: '32px',
                 borderRadius: '8px',
-                backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                backgroundColor: 'rgba(59, 130, 246, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#38bdf8'
+                color: '#3b82f6'
               }}
             >
               <FileText size={18} />
@@ -207,7 +207,7 @@ export function ExecutiveBriefModal({
         >
           {/* Cover Header */}
           <div style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '16px', marginBottom: '20px' }}>
-            <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', color: '#38bdf8', fontWeight: '700' }}>
+            <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', color: '#3b82f6', fontWeight: '700' }}>
               EXECUTIVE BRIEFING
             </span>
             <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#f8fafc', marginTop: '4px', marginBottom: '8px' }}>
@@ -220,7 +220,7 @@ export function ExecutiveBriefModal({
 
           {/* Key Metrics Benchmark Grid */}
           <div style={{ marginBottom: '24px' }}>
-            <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px' }}>
+            <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px' }}>
               Core Technical &amp; Business Benchmarks
             </h4>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
@@ -236,7 +236,7 @@ export function ExecutiveBriefModal({
                 >
                   <div style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase' }}>{m.label}</div>
                   <div style={{ fontSize: '22px', fontWeight: '800', color: '#f8fafc', margin: '2px 0' }}>{m.value}</div>
-                  <div style={{ fontSize: '11px', color: '#38bdf8' }}>{m.change}</div>
+                  <div style={{ fontSize: '11px', color: '#93c5fd' }}>{m.change}</div>
                 </div>
               ))}
             </div>
@@ -244,7 +244,7 @@ export function ExecutiveBriefModal({
 
           {/* Slide Breakdown Accordion/Cards */}
           <div style={{ marginBottom: '24px' }}>
-            <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px' }}>
+            <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px' }}>
               Slide-by-Slide Strategic Highlights
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -277,7 +277,7 @@ export function ExecutiveBriefModal({
           {/* Q&A Session Transcript */}
           {doubtHistory.length > 0 && (
             <div style={{ marginBottom: '16px' }}>
-              <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <MessageSquare size={16} />
                 Live Q&amp;A Session Transcript ({doubtHistory.length} doubts answered)
               </h4>
@@ -286,13 +286,13 @@ export function ExecutiveBriefModal({
                   <div
                     key={item.id || idx}
                     style={{
-                      backgroundColor: 'rgba(56, 189, 248, 0.04)',
-                      border: '1px solid rgba(56, 189, 248, 0.15)',
+                      backgroundColor: 'rgba(59, 130, 246, 0.06)',
+                      border: '1px solid rgba(59, 130, 246, 0.25)',
                       borderRadius: '8px',
                       padding: '12px 16px'
                     }}
                   >
-                    <div style={{ fontSize: '11px', color: '#38bdf8', fontWeight: '600', marginBottom: '2px' }}>
+                    <div style={{ fontSize: '11px', color: '#93c5fd', fontWeight: '600', marginBottom: '2px' }}>
                       Q{idx + 1} &bull; {item.slideTitle || `Slide ${item.slideNumber || 1}`}
                     </div>
                     <div style={{ fontWeight: '600', color: '#ffffff', marginBottom: '6px', fontSize: '13px' }}>

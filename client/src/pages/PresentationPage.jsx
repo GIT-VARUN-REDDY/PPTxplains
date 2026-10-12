@@ -4,6 +4,7 @@ import { SlideViewer } from '../components/SlideViewer.jsx';
 import { SlideControls } from '../components/SlideControls.jsx';
 import { AIDoubtPanel } from '../components/AIDoubtPanel.jsx';
 import { SlideOverviewModal } from '../components/SlideOverviewModal.jsx';
+import { SlideThumbnailsDrawer } from '../components/SlideThumbnailsDrawer.jsx';
 import { ExecutiveBriefModal } from '../components/ExecutiveBriefModal.jsx';
 import { KnowledgeCheckModal } from '../components/KnowledgeCheckModal.jsx';
 import { UploadPresentationModal } from '../components/UploadPresentationModal.jsx';
@@ -18,6 +19,7 @@ export function PresentationPage({
 }) {
   const containerRef = useRef(null);
   const [isOverviewOpen, setIsOverviewOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isBriefOpen, setIsBriefOpen] = useState(false);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isNotesOpen, setIsNotesOpen] = useState(false);
@@ -79,6 +81,8 @@ export function PresentationPage({
     voices,
     speechRate,
     setSpeechRate,
+    volume,
+    setVolume,
     selectedVoiceURI,
     setSelectedVoiceURI,
     speak,
@@ -644,6 +648,10 @@ export function PresentationPage({
             playSlideNarration(currentSlide, progress);
           }
         }}
+        volume={volume}
+        onVolumeChange={setVolume}
+        isDrawerOpen={isDrawerOpen}
+        onToggleDrawer={() => setIsDrawerOpen((prev) => !prev)}
         voices={voices}
         selectedVoiceURI={selectedVoiceURI}
         onVoiceChange={(v) => {
@@ -659,6 +667,17 @@ export function PresentationPage({
         onRestart={handleRestart}
         onDurationChange={setDurationSec}
         onSeek={handleSeek}
+      />
+
+      {/* Slide Thumbnails Drawer / Mini-Map */}
+      <SlideThumbnailsDrawer
+        isOpen={isDrawerOpen}
+        slides={presentation?.slides}
+        currentSlideIndex={currentSlideIndex}
+        onSelectSlide={(idx) => {
+          handleGoToSlide(idx);
+        }}
+        onClose={() => setIsDrawerOpen(false)}
       />
 
       {/* Slide Overview Grid Modal */}

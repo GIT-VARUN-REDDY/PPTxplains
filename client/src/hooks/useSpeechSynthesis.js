@@ -70,6 +70,33 @@ export function useSpeechSynthesis() {
     return 1.0;
   });
 
+  // Volume state (0.0 to 1.0, persisted)
+  const [volume, setVolumeState] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('pptx_speech_volume');
+      if (saved !== null) {
+        const parsed = parseFloat(saved);
+        if (!isNaN(parsed) && parsed >= 0 && parsed <= 1) return parsed;
+      }
+    }
+    return 1.0;
+  });
+
+  const volumeRef = useRef(volume);
+  volumeRef.current = volume;
+
+  const setVolume = useCallback((val) => {
+    const clamped = Math.max(0, Math.min(1, Number(val)));
+    setVolumeState(clamped);
+    volumeRef.current = clamped;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pptx_speech_volume', clamped.toString());
+    }
+    if (activeAudioRef.current) {
+      activeAudioRef.current.volume = clamped;
+    }
+  }, []);
+
   // Selected voice state (persisted, strictly neural studio)
   const [selectedVoiceURI, setSelectedVoiceURIState] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -330,6 +357,7 @@ export function useSpeechSynthesis() {
         const audio = new Audio(audioUrl);
         activeAudioRef.current = audio;
         audio.playbackRate = activeRate;
+        audio.volume = volumeRef.current;
 
         // Approximate starting position if seeking
         if (startCharOffset > 0 && fullSpokenText.length > 0) {
@@ -431,6 +459,7 @@ export function useSpeechSynthesis() {
       if (chosen) utterance.voice = chosen;
 
       utterance.rate = activeRate;
+      utterance.volume = volumeRef.current;
       utterance.pitch = 1.0;
 
       utterance.onstart = () => {
@@ -481,6 +510,8 @@ export function useSpeechSynthesis() {
     voices,
     speechRate,
     setSpeechRate,
+    volume,
+    setVolume,
     selectedVoiceURI,
     setSelectedVoiceURI,
     speak,

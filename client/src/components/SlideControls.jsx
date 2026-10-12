@@ -11,7 +11,10 @@ import {
   Crosshair,
   Gauge,
   Mic,
-  BookOpen
+  BookOpen,
+  Volume2,
+  VolumeX,
+  LayoutGrid
 } from 'lucide-react';
 
 function SlideControlsComponent({
@@ -29,6 +32,10 @@ function SlideControlsComponent({
   onToggleNotes,
   speechRate = 1.0,
   onSpeechRateChange,
+  volume = 1.0,
+  onVolumeChange,
+  isDrawerOpen = false,
+  onToggleDrawer,
   voices = [],
   selectedVoiceURI = '',
   onVoiceChange,
@@ -273,6 +280,26 @@ function SlideControlsComponent({
             </button>
           )}
 
+          {/* Slide Drawer Mini-Map Toggle */}
+          {onToggleDrawer && (
+            <button
+              onClick={onToggleDrawer}
+              className={`btn ${isDrawerOpen ? 'btn-primary' : 'btn-ghost'}`}
+              style={{
+                fontSize: '12px',
+                padding: '5px 10px',
+                height: '32px',
+                gap: '6px',
+                border: isDrawerOpen ? 'none' : '1px solid var(--border-subtle)'
+              }}
+              title={isDrawerOpen ? "Close Slide Thumbnails Drawer (M)" : "Open Slide Thumbnails Drawer (M)"}
+              aria-label="Toggle Slide Thumbnails Drawer"
+            >
+              <LayoutGrid size={13} style={{ color: isDrawerOpen ? '#ffffff' : 'var(--accent-primary, #3b82f6)' }} />
+              <span className="hide-on-mobile">{isDrawerOpen ? 'Thumbnails' : 'Thumbnails'}</span>
+            </button>
+          )}
+
           {/* Dots Indicator */}
           <div className="hide-on-mobile" style={{ display: 'flex', gap: '5px', marginLeft: '8px' }}>
             {Array.from({ length: totalSlides }).map((_, idx) => (
@@ -423,6 +450,54 @@ function SlideControlsComponent({
                   </option>
                 ))}
               </select>
+            </div>
+          )}
+
+          {/* Volume Slider & Mute Toggle */}
+          {onVolumeChange && (
+            <div
+              className="hide-on-mobile"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '3px 8px',
+                borderRadius: '6px',
+                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid var(--border-subtle)'
+              }}
+              title={`Narration Volume: ${Math.round(volume * 100)}%`}
+            >
+              <button
+                onClick={() => onVolumeChange(volume > 0 ? 0 : 1)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: volume === 0 ? 'var(--text-muted)' : 'var(--accent-primary, #3b82f6)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: 0
+                }}
+                aria-label={volume === 0 ? 'Unmute narration' : 'Mute narration'}
+              >
+                {volume === 0 ? <VolumeX size={14} /> : <Volume2 size={14} />}
+              </button>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={volume}
+                onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
+                style={{
+                  width: '55px',
+                  height: '4px',
+                  accentColor: 'var(--accent-primary, #3b82f6)',
+                  cursor: 'pointer'
+                }}
+                aria-label="Volume Slider"
+              />
             </div>
           )}
 
