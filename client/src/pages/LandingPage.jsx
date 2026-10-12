@@ -1,65 +1,150 @@
-import React, { useState, useEffect } from 'react';
-import { Sparkles, Play, UploadCloud, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Play, UploadCloud, ArrowRight, Mic, Sparkles, MessageSquare, Shield, Layers, ChevronDown } from 'lucide-react';
 import { UploadPresentationModal } from '../components/UploadPresentationModal.jsx';
 import { CanvasBackground } from '../components/CanvasBackground.jsx';
 
+/**
+ * Editorial Pinned Scrollytelling Chapters
+ */
+const CHAPTERS = [
+  {
+    id: 'chapter-1',
+    number: 'Chapter 01',
+    subtitle: 'The Threshold',
+    titleLine1: 'Analyze',
+    titleLine2: 'Understand.',
+    tagline: 'An immersive editorial journey through your presentation data.',
+    description: 'Transform traditional passive slide decks into high-impact, interactive intelligence. Powered by advanced AI to synthesize, narrate, and explain your slides with precision.',
+    hasCTA: true
+  },
+  {
+    id: 'chapter-2',
+    number: 'Chapter 02',
+    subtitle: 'Procedural Intelligence',
+    titleLine1: 'Cognitive',
+    titleLine2: 'Synthesis.',
+    tagline: 'Deep slide decomposition and benchmark extraction.',
+    description: 'Our multimodal engine parses every technical architecture diagram, growth benchmark, and speaker note. It distills complex corporate decks into clear, executive-ready insights without cognitive overload.',
+    features: [
+      { icon: Layers, label: 'Slide Breakdown', detail: 'Deconstructs visual layouts into structured takeaways' },
+      { icon: Shield, label: 'Deterministic Benchmarks', detail: 'Tracks baseline metrics and verified data points' }
+    ]
+  },
+  {
+    id: 'chapter-3',
+    number: 'Chapter 03',
+    subtitle: 'Conversational Voice',
+    titleLine1: 'Speak To',
+    titleLine2: 'The Data.',
+    tagline: 'Natural keynote presentation with zero latency.',
+    description: 'Studio-grade neural voice narration explains each slide with human breathing pauses and natural cadence. Ask spontaneous technical questions by voice or text and receive instant, slide-grounded answers.',
+    features: [
+      { icon: Mic, label: 'Neural Keynote Presenter', detail: 'Natural human cadence with breathing pauses' },
+      { icon: MessageSquare, label: 'Contextual AI Doubt Desk', detail: 'Real-time answers grounded on the active slide' }
+    ]
+  }
+];
+
 export function LandingPage({ onStartPresentation }) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
+  const containerRef = useRef(null);
+  const [activeStep, setActiveStep] = useState(0); // 0, 1, 2
+  const [scrollProgress, setScrollProgress] = useState(0); // 0.0 to 1.0
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const totalScrollable = containerRef.current.scrollHeight - window.innerHeight;
+      if (totalScrollable <= 0) return;
+
+      const currentScrolled = Math.max(0, -rect.top);
+      const progress = Math.min(1, Math.max(0, currentScrolled / totalScrollable));
+      setScrollProgress(progress);
+
+      // Determine active chapter based on progress thresholds
+      // 0.00 - 0.33 -> Chapter 0
+      // 0.33 - 0.67 -> Chapter 1
+      // 0.67 - 1.00 -> Chapter 2
+      if (progress < 0.33) {
+        setActiveStep(0);
+      } else if (progress < 0.67) {
+        setActiveStep(1);
+      } else {
+        setActiveStep(2);
+      }
     };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToStep = (stepIndex) => {
+    if (!containerRef.current) return;
+    const totalScrollable = containerRef.current.scrollHeight - window.innerHeight;
+    const targetY = containerRef.current.offsetTop + (stepIndex / 2) * totalScrollable;
+    window.scrollTo({ top: targetY, behavior: 'smooth' });
+  };
+
   return (
-    <div style={{ position: 'relative', width: '100%', minHeight: '100vh', backgroundColor: '#010204', overflowX: 'hidden' }}>
-      {/* 3D Background */}
+    <div
+      ref={containerRef}
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '350vh', // Tall virtual scroll track
+        backgroundColor: '#010204',
+        boxSizing: 'border-box'
+      }}
+    >
+      {/* 3D Background - Fixed in viewport */}
       <CanvasBackground />
 
-      {/* Header */}
-      <header style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        minHeight: '64px',
-        padding: '16px clamp(16px, 5vw, 48px)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        zIndex: 50,
-        background: 'rgba(1, 2, 4, 0.85)',
-        backdropFilter: 'blur(16px)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
-        boxSizing: 'border-box'
-      }}>
+      {/* Persistent Glass Navigation Bar */}
+      <header
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          minHeight: '64px',
+          padding: '16px clamp(16px, 5vw, 48px)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          zIndex: 60,
+          background: 'rgba(1, 2, 4, 0.82)',
+          backdropFilter: 'blur(16px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          boxSizing: 'border-box'
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <img 
-            src="/pptxplains-logo.png" 
-            alt="PPTxplains" 
-            style={{ 
-              height: '34px', 
-              width: 'auto', 
+          <img
+            src="/pptxplains-logo.png"
+            alt="PPTxplains"
+            style={{
+              height: '34px',
+              width: 'auto',
               objectFit: 'contain',
               display: 'block',
-              filter: 'drop-shadow(0 0 12px rgba(59, 130, 246, 0.45))'
-            }} 
+              filter: 'drop-shadow(0 0 12px rgba(59, 130, 246, 0.5))'
+            }}
           />
         </div>
+
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <button
             onClick={() => setIsUploadOpen(true)}
             style={{
               background: 'transparent',
               border: '1px solid rgba(59, 130, 246, 0.45)',
-              color: '#60a5fa',
+              color: '#93c5fd',
               padding: '8px 18px',
               borderRadius: '6px',
               fontSize: '11.5px',
+              fontWeight: '600',
               letterSpacing: '1px',
               textTransform: 'uppercase',
               cursor: 'pointer',
@@ -69,249 +154,336 @@ export function LandingPage({ onStartPresentation }) {
           >
             Upload Deck
           </button>
+
+          <button
+            onClick={onStartPresentation}
+            style={{
+              background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+              color: '#ffffff',
+              border: 'none',
+              padding: '8px 18px',
+              borderRadius: '6px',
+              fontSize: '11.5px',
+              fontWeight: '700',
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 2px 12px rgba(37, 99, 235, 0.4)'
+            }}
+          >
+            <Play size={13} fill="currentColor" /> Launch
+          </button>
         </div>
       </header>
 
-      {/* Main Editorial Content */}
-      <main style={{ position: 'relative', zIndex: 10, width: '100%', display: 'flex', flexDirection: 'column' }}>
-        
-        {/* Chapter 01: Hero */}
-        <section style={{
-          minHeight: '100vh',
+      {/* STATIC PINNED VIEWPORT: The page NEVER moves down; text transitions in place */}
+      <div
+        style={{
+          position: 'sticky',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100vh',
+          zIndex: 20,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          padding: 'clamp(130px, 20vh, 180px) clamp(20px, 6vw, 8vw) clamp(60px, 10vh, 100px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-          boxSizing: 'border-box'
-        }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: 'clamp(18px, 3vh, 32px)' }}>
-              <div style={{ width: '20px', height: '1px', background: '#3b82f6' }} />
-              <h4 style={{ color: '#60a5fa', fontSize: 'clamp(10px, 1.6vw, 11px)', letterSpacing: '4px', textTransform: 'uppercase', margin: 0 }}>
-                Chapter 01 &mdash; The Threshold
-              </h4>
-            </div>
-
-            <h1 style={{
-              fontSize: 'clamp(48px, 9.5vw, 140px)',
-              fontWeight: '300',
-              lineHeight: '0.94',
-              color: '#ffffff',
-              letterSpacing: '-2px',
-              marginBottom: 'clamp(24px, 4vh, 40px)',
-              maxWidth: '1000px',
-              wordBreak: 'break-word'
-            }}>
-              Analyze <br/>
-              <span style={{ fontStyle: 'italic', color: '#3b82f6' }}>Understand.</span>
-            </h1>
-
-            <p style={{
-              color: '#93c5fd',
-              fontSize: 'clamp(14px, 2vw, 16px)',
-              maxWidth: '480px',
-              lineHeight: '1.7',
-              marginBottom: 'clamp(32px, 5vh, 48px)',
-              fontWeight: '400'
-            }}>
-              An immersive editorial journey through your presentation data. Powered by advanced AI to synthesize, narrate, and interact with your slides in real-time.
-            </p>
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center' }}>
-              <button
-                onClick={onStartPresentation}
-                style={{
-                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                  color: '#ffffff',
-                  border: 'none',
-                  padding: 'clamp(14px, 2vw, 18px) clamp(24px, 4vw, 40px)',
-                  borderRadius: '6px',
-                  fontSize: 'clamp(11.5px, 1.8vw, 13px)',
-                  fontWeight: '700',
-                  letterSpacing: '2px',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  boxShadow: '0 4px 24px rgba(37, 99, 235, 0.4)',
-                  transition: 'transform 0.2s ease'
-                }}
-              >
-                <Play size={16} fill="currentColor" /> Enter The Experience
-              </button>
-
-              <button
-                onClick={() => setIsUploadOpen(true)}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.04)',
-                  color: '#e2e8f0',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  padding: 'clamp(14px, 2vw, 18px) clamp(20px, 3vw, 32px)',
-                  borderRadius: '6px',
-                  fontSize: 'clamp(11.5px, 1.8vw, 13px)',
-                  fontWeight: '600',
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '10px'
-                }}
-              >
-                <UploadCloud size={16} /> Choose File
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* Chapter 02: Engine */}
-        <section
-          className="chapter-engine-section"
+          padding: 'clamp(80px, 12vh, 120px) clamp(24px, 7vw, 10vw)',
+          boxSizing: 'border-box',
+          pointerEvents: 'none' // allow scroll through to window
+        }}
+      >
+        {/* Right Lateral Chapter Progress Indicator */}
+        <div
           style={{
-            minHeight: '100vh',
+            position: 'absolute',
+            right: 'clamp(20px, 4vw, 48px)',
+            top: '50%',
+            transform: 'translateY(-50%)',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'center',
-            padding: 'clamp(80px, 14vh, 140px) clamp(20px, 6vw, 8vw)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-            backgroundColor: 'rgba(2, 4, 8, 0.55)',
-            boxSizing: 'border-box'
+            gap: '16px',
+            zIndex: 40,
+            pointerEvents: 'auto'
           }}
         >
-          <div className="chapter-engine-container">
-            <h4 style={{ color: '#60a5fa', fontSize: 'clamp(10px, 1.6vw, 11px)', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: 'clamp(20px, 3vh, 32px)' }}>
-              Chapter 02 &mdash; The Engine
-            </h4>
-            <h2 style={{
-              fontSize: 'clamp(36px, 7vw, 96px)',
-              fontWeight: '300',
-              lineHeight: '1',
-              color: '#ffffff',
-              letterSpacing: '-2px',
-              marginBottom: 'clamp(24px, 3vh, 40px)',
-              maxWidth: '800px',
-              wordBreak: 'break-word'
-            }}>
-              Procedural <br/>
-              Intelligence.
-            </h2>
-            <p style={{
-              color: '#93c5fd',
-              fontSize: 'clamp(14px, 2vw, 16px)',
-              maxWidth: '480px',
-              lineHeight: '1.7',
-              fontWeight: '400'
-            }}>
-              Our deep-learning engine parses every technical diagram, metric, and bullet point. It extracts profound meaning from the noise, presenting you with unparalleled clarity.
-            </p>
-          </div>
-        </section>
+          {CHAPTERS.map((ch, idx) => {
+            const isActive = activeStep === idx;
+            return (
+              <button
+                key={ch.id}
+                onClick={() => scrollToStep(idx)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '4px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  outline: 'none'
+                }}
+                title={`Jump to ${ch.number}`}
+              >
+                <span
+                  className="hide-on-mobile"
+                  style={{
+                    fontSize: '10px',
+                    fontWeight: '700',
+                    letterSpacing: '1.5px',
+                    textTransform: 'uppercase',
+                    color: isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.3)',
+                    transition: 'color 300ms ease'
+                  }}
+                >
+                  {ch.number}
+                </span>
+                <div
+                  style={{
+                    width: isActive ? '24px' : '8px',
+                    height: '4px',
+                    borderRadius: '2px',
+                    backgroundColor: isActive ? '#3b82f6' : 'rgba(255, 255, 255, 0.25)',
+                    boxShadow: isActive ? '0 0 10px #3b82f6' : 'none',
+                    transition: 'all 300ms cubic-bezier(0.16, 1, 0.3, 1)'
+                  }}
+                />
+              </button>
+            );
+          })}
+        </div>
 
-        {/* Chapter 03: Interaction */}
-        <section style={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          padding: 'clamp(80px, 14vh, 140px) clamp(20px, 6vw, 8vw)',
-          backgroundColor: 'rgba(2, 4, 8, 0.3)',
-          boxSizing: 'border-box'
-        }}>
-          <h4 style={{ color: '#3b82f6', fontSize: 'clamp(10px, 1.6vw, 11px)', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: 'clamp(20px, 3vh, 32px)' }}>
-            Chapter 03 &mdash; Interaction
-          </h4>
-          <h2 style={{
-            fontSize: 'clamp(36px, 7vw, 96px)',
-            fontWeight: '300',
-            lineHeight: '1',
-            color: '#ffffff',
-            letterSpacing: '-2px',
-            marginBottom: 'clamp(36px, 6vh, 64px)',
-            maxWidth: '800px',
-            wordBreak: 'break-word'
-          }}>
-            Speak to <br/>
-            the Data.
-          </h2>
-          
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
-            gap: 'clamp(24px, 4vw, 40px)',
-            maxWidth: '1000px'
-          }}>
-            <div style={{
-              padding: 'clamp(24px, 4vw, 40px) 0',
-              borderTop: '1px solid rgba(59, 130, 246, 0.4)'
-            }}>
-              <h3 style={{ fontSize: 'clamp(17px, 2.5vw, 20px)', color: '#fff', marginBottom: '14px', fontWeight: '500' }}>
-                Voice Command
-              </h3>
-              <p style={{ color: '#93c5fd', fontSize: 'clamp(13.5px, 2vw, 15px)', lineHeight: '1.7' }}>
-                Hands-free exploration. Ask questions naturally and receive synthesized auditory responses customized to your slide context.
-              </p>
-            </div>
-            <div style={{
-              padding: 'clamp(24px, 4vw, 40px) 0',
-              borderTop: '1px solid rgba(37, 99, 235, 0.4)'
-            }}>
-              <h3 style={{ fontSize: 'clamp(17px, 2.5vw, 20px)', color: '#fff', marginBottom: '14px', fontWeight: '500' }}>
-                Text Context
-              </h3>
-              <p style={{ color: '#93c5fd', fontSize: 'clamp(13.5px, 2vw, 15px)', lineHeight: '1.7' }}>
-                Type specific technical queries. The AI uses the exact visual context of your current slide to deliver precise, accurate answers.
-              </p>
-            </div>
-          </div>
-        </section>
-        
-        {/* Footer Manifesto */}
-        <footer style={{
-          padding: 'clamp(48px, 8vh, 80px) clamp(20px, 6vw, 8vw) clamp(32px, 5vh, 48px)',
-          backgroundColor: '#020408',
-          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-          boxSizing: 'border-box'
-        }}>
-          <div style={{
+        {/* Dynamic Chapter Text Overlay Container (Morphs & Fades In Place) */}
+        <div style={{ position: 'relative', maxWidth: '1000px', width: '100%' }}>
+          {CHAPTERS.map((chapter, idx) => {
+            const isActive = activeStep === idx;
+            return (
+              <div
+                key={chapter.id}
+                style={{
+                  position: idx === 0 ? 'relative' : 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  opacity: isActive ? 1 : 0,
+                  transform: isActive
+                    ? 'translateY(0) scale(1)'
+                    : activeStep > idx
+                    ? 'translateY(-30px) scale(0.98)'
+                    : 'translateY(30px) scale(0.98)',
+                  filter: isActive ? 'blur(0px)' : 'blur(6px)',
+                  transition: 'opacity 500ms cubic-bezier(0.16, 1, 0.3, 1), transform 500ms cubic-bezier(0.16, 1, 0.3, 1), filter 500ms ease',
+                  pointerEvents: isActive ? 'auto' : 'none',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'clamp(14px, 2.5vh, 24px)'
+                }}
+              >
+                {/* Chapter Pre-header */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '28px', height: '2px', background: '#3b82f6' }} />
+                  <span
+                    style={{
+                      color: '#93c5fd',
+                      fontSize: 'clamp(11px, 1.6vw, 13px)',
+                      letterSpacing: '4px',
+                      textTransform: 'uppercase',
+                      fontWeight: '700'
+                    }}
+                  >
+                    {chapter.number} &mdash; {chapter.subtitle}
+                  </span>
+                </div>
+
+                {/* Monumental Headline */}
+                <h1
+                  style={{
+                    fontSize: 'clamp(46px, 8.5vw, 120px)',
+                    fontWeight: '300',
+                    lineHeight: '0.94',
+                    color: '#ffffff',
+                    letterSpacing: '-2px',
+                    margin: 0,
+                    wordBreak: 'break-word'
+                  }}
+                >
+                  {chapter.titleLine1} <br />
+                  <span style={{ fontStyle: 'italic', color: '#3b82f6', fontWeight: '400' }}>
+                    {chapter.titleLine2}
+                  </span>
+                </h1>
+
+                {/* Lead Subtitle & Description */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '620px' }}>
+                  <p
+                    style={{
+                      color: '#ffffff',
+                      fontSize: 'clamp(15px, 2.2vw, 18px)',
+                      lineHeight: '1.5',
+                      fontWeight: '600',
+                      margin: 0
+                    }}
+                  >
+                    {chapter.tagline}
+                  </p>
+                  <p
+                    style={{
+                      color: '#93c5fd',
+                      fontSize: 'clamp(13px, 1.8vw, 15px)',
+                      lineHeight: '1.7',
+                      margin: 0,
+                      fontWeight: '400'
+                    }}
+                  >
+                    {chapter.description}
+                  </p>
+                </div>
+
+                {/* Chapter Features Cards (for Ch 2 & 3) */}
+                {chapter.features && (
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                      gap: '16px',
+                      marginTop: '8px',
+                      maxWidth: '680px'
+                    }}
+                  >
+                    {chapter.features.map((feat, fIdx) => {
+                      const IconComp = feat.icon;
+                      return (
+                        <div
+                          key={fIdx}
+                          style={{
+                            padding: '14px 16px',
+                            backgroundColor: 'rgba(10, 17, 40, 0.75)',
+                            border: '1px solid rgba(59, 130, 246, 0.3)',
+                            borderRadius: '10px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '6px',
+                            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#3b82f6' }}>
+                            <IconComp size={16} />
+                            <span style={{ fontSize: '13px', fontWeight: '700', color: '#ffffff' }}>
+                              {feat.label}
+                            </span>
+                          </div>
+                          <span style={{ fontSize: '12px', color: '#93c5fd', lineHeight: '1.5' }}>
+                            {feat.detail}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* CTA Action Buttons (Chapter 1) */}
+                {chapter.hasCTA && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', marginTop: '10px' }}>
+                    <button
+                      onClick={onStartPresentation}
+                      style={{
+                        background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                        color: '#ffffff',
+                        border: 'none',
+                        padding: 'clamp(14px, 2vw, 18px) clamp(28px, 4vw, 40px)',
+                        borderRadius: '6px',
+                        fontSize: 'clamp(11px, 1.6vw, 12.5px)',
+                        fontWeight: '700',
+                        letterSpacing: '2px',
+                        textTransform: 'uppercase',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        boxShadow: '0 4px 24px rgba(37, 99, 235, 0.5)',
+                        transition: 'transform 0.2s ease'
+                      }}
+                    >
+                      <Play size={15} fill="currentColor" /> Enter The Experience
+                    </button>
+
+                    <button
+                      onClick={() => setIsUploadOpen(true)}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.04)',
+                        color: '#ffffff',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        padding: 'clamp(14px, 2vw, 18px) clamp(22px, 3vw, 32px)',
+                        borderRadius: '6px',
+                        fontSize: 'clamp(11px, 1.6vw, 12.5px)',
+                        fontWeight: '600',
+                        letterSpacing: '1px',
+                        textTransform: 'uppercase',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}
+                    >
+                      <UploadCloud size={15} /> Upload Slides
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Bottom Pinned Helper Bar */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 'clamp(16px, 3vh, 32px)',
+            left: 'clamp(24px, 7vw, 10vw)',
+            right: 'clamp(24px, 7vw, 10vw)',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            flexWrap: 'wrap',
-            gap: '32px'
-          }}>
-            <div>
-              <h1 style={{ fontSize: 'clamp(24px, 4vw, 32px)', fontWeight: '300', color: '#fff', letterSpacing: '-1px', marginBottom: '14px' }}>
-                PPTxplains.
-              </h1>
-              <p style={{ color: '#64748b', fontSize: 'clamp(13px, 1.8vw, 14px)', maxWidth: '340px', lineHeight: '1.6' }}>
-                A deliberately minimal, highly interactive intelligence tool built for technical presentations.
-              </p>
-            </div>
+            alignItems: 'center',
+            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            paddingTop: '12px',
+            pointerEvents: 'auto'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#93c5fd', fontSize: '11px', fontWeight: '600', letterSpacing: '1px' }}>
+            <span style={{ color: '#3b82f6' }}>0{activeStep + 1}</span>
+            <span style={{ opacity: 0.4 }}>/</span>
+            <span>03</span>
+            <span className="hide-on-mobile" style={{ marginLeft: '8px', color: 'rgba(255, 255, 255, 0.4)' }}>
+              &bull; Scroll to explore narrative
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <button
               onClick={onStartPresentation}
               style={{
-                background: '#fff',
-                color: '#000',
+                background: 'none',
                 border: 'none',
-                padding: 'clamp(12px, 2vw, 16px) clamp(20px, 3vw, 32px)',
-                borderRadius: '4px',
-                fontSize: 'clamp(11px, 1.6vw, 12px)',
-                fontWeight: '800',
-                letterSpacing: '1px',
+                color: '#ffffff',
+                fontSize: '11px',
+                fontWeight: '700',
+                letterSpacing: '1.5px',
                 textTransform: 'uppercase',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px'
+                gap: '6px',
+                padding: '4px 8px'
               }}
             >
-              Launch Platform <ArrowRight size={14} />
+              Skip to Presentation <ArrowRight size={13} color="#3b82f6" />
             </button>
           </div>
-        </footer>
-      </main>
+        </div>
+      </div>
 
       <UploadPresentationModal
         isOpen={isUploadOpen}
