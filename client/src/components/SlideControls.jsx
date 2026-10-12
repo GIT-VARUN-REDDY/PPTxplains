@@ -173,16 +173,18 @@ function SlideControlsComponent({
 
       {/* Control Buttons Container */}
       <div
+        className="slide-controls-bar"
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 24px',
-          height: '100%'
+          padding: '0 clamp(10px, 2.5vw, 24px)',
+          height: '100%',
+          gap: '8px'
         }}
       >
         {/* Left Section: Restart & Slide Counter Dots */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button
             onClick={onRestart}
             className="btn btn-ghost"
