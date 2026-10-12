@@ -65,9 +65,20 @@ function cleanTextForTTS(text) {
     .replace(/&amp;/g, ' and ')
     .replace(/&/g, ' and ')
     .replace(/[<>]/g, ' ')
-    .replace(/•\s*/g, '')
-    .replace(/[-*]\s+/g, '')
+    // Replace bullet points and dashes with natural pauses
+    .replace(/•\s*/g, '. ')
+    .replace(/(?:^|\n)\s*[-*]\s+/g, '. ')
+    // Replace semicolons and colons with a pause
+    .replace(/;\s*/g, '; ')
+    .replace(/:\s*/g, ': ')
+    // Ensure comma has natural spacing
+    .replace(/,([^\s])/g, ', $1')
+    // Ensure full stop, exclamation, question mark have clean trailing space
+    .replace(/([.?!])([^\s])/g, '$1 $2')
+    // Normalize line breaks to a period followed by space for clean breath pause
     .replace(/[\r\n]+/g, '. ')
+    // Remove duplicate punctuation like ".." or ". ."
+    .replace(/\.{2,}/g, '.')
     .replace(/\s{2,}/g, ' ')
     .trim();
 }

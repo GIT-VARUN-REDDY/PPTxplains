@@ -30,9 +30,20 @@ export function cleanTextForSpeech(text) {
     .replace(/&amp;/g, ' and ')
     .replace(/&/g, ' and ')
     .replace(/[<>]/g, ' ')
-    .replace(/•\s*/g, '')
-    .replace(/[-*]\s+/g, '')
+    // Replace bullet points and dashes with natural sentence pauses
+    .replace(/•\s*/g, '. ')
+    .replace(/(?:^|\n)\s*[-*]\s+/g, '. ')
+    // Replace semicolons and colons with breathing pauses
+    .replace(/;\s*/g, '; ')
+    .replace(/:\s*/g, ': ')
+    // Ensure commas have clean breathing space
+    .replace(/,([^\s])/g, ', $1')
+    // Ensure full stops, exclamation and question marks have trailing spacing
+    .replace(/([.?!])([^\s])/g, '$1 $2')
+    // Normalize line breaks to a full stop followed by space
     .replace(/[\r\n]+/g, '. ')
+    // Remove duplicate periods
+    .replace(/\.{2,}/g, '.')
     .replace(/\s{2,}/g, ' ')
     .trim();
 }
