@@ -1,326 +1,348 @@
-import React, { useState } from 'react';
-import { 
-  Sparkles, 
-  Play, 
-  Mic, 
-  MessageSquare, 
-  Layers, 
-  ArrowRight, 
-  CheckCircle,
-  Clock,
-  Volume2,
-  ShieldAlert,
-  UploadCloud
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Sparkles, Play, UploadCloud, ArrowRight } from 'lucide-react';
 import { UploadPresentationModal } from '../components/UploadPresentationModal.jsx';
+import { CanvasBackground } from '../components/CanvasBackground.jsx';
 
 export function LandingPage({ onStartPresentation }) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
+  const [isHovering, setIsHovering] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
   return (
-    <div className="app-container bg-grid-pattern" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Top Navigation */}
+    <div style={{ position: 'relative', width: '100%', minHeight: '100vh', backgroundColor: '#010204', overflowX: 'hidden' }}>
+      {/* 3D Background */}
+      <CanvasBackground />
+
+      {/* Subtle Interactive Ambient Cursor (Only for pointing devices) */}
+      <div
+        className="editorial-cursor"
+        style={{
+          position: 'fixed',
+          top: mousePos.y,
+          left: mousePos.x,
+          width: isHovering ? '44px' : '24px',
+          height: isHovering ? '44px' : '24px',
+          borderRadius: '50%',
+          border: '1px solid rgba(56, 189, 248, 0.4)',
+          backgroundColor: 'rgba(99, 102, 241, 0.08)',
+          pointerEvents: 'none',
+          transform: 'translate(-50%, -50%)',
+          transition: 'width 0.2s ease, height 0.2s ease, background-color 0.2s ease',
+          zIndex: 9999,
+          display: 'none' // Enabled via media query in index.css for hover:hover
+        }}
+      />
+
+      {/* Header */}
       <header style={{
-        height: '68px',
-        borderBottom: '1px solid var(--border-subtle)',
-        backgroundColor: 'rgba(8, 12, 20, 0.8)',
-        backdropFilter: 'blur(12px)',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        padding: 'clamp(16px, 2.5vw, 28px) clamp(16px, 5vw, 48px)',
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 32px'
+        alignItems: 'center',
+        zIndex: 50,
+        background: scrollY > 40 ? 'rgba(2, 4, 8, 0.85)' : 'transparent',
+        backdropFilter: scrollY > 40 ? 'blur(16px)' : 'none',
+        transition: 'all 0.3s ease',
+        borderBottom: scrollY > 40 ? '1px solid rgba(255, 255, 255, 0.07)' : '1px solid transparent'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            width: '34px',
-            height: '34px',
-            borderRadius: '8px',
-            background: 'var(--accent-gradient)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#060b14'
-          }}>
-            <Sparkles size={20} />
-          </div>
-          <div>
-            <span style={{ fontSize: '16px', fontWeight: '800', color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
-              PPTxplains
-            </span>
-            <span style={{ fontSize: '12px', color: 'var(--accent-cyan)', marginLeft: '6px', fontWeight: '600' }}>
-              AI Assistant
-            </span>
-          </div>
+          <Sparkles size={18} color="#38bdf8" />
+          <span style={{ fontSize: 'clamp(11px, 1.8vw, 13px)', fontWeight: '800', letterSpacing: '3px', color: '#f8fafc', textTransform: 'uppercase' }}>
+            PPTxplains
+          </span>
+          <span style={{ fontSize: '10px', color: '#6366f1', letterSpacing: '1px', opacity: 0.8, marginLeft: '6px', display: 'inline-block' }}>
+            京都 / v2
+          </span>
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <button
             onClick={() => setIsUploadOpen(true)}
-            className="btn btn-secondary"
-            style={{ padding: '8px 16px', fontSize: '13px', gap: '6px' }}
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(56, 189, 248, 0.35)',
+              color: '#38bdf8',
+              padding: 'clamp(8px, 1.5vw, 10px) clamp(14px, 2.5vw, 24px)',
+              borderRadius: '6px',
+              fontSize: 'clamp(11px, 1.6vw, 12px)',
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
           >
-            <UploadCloud size={15} />
-            <span>Upload Deck</span>
-          </button>
-
-          <button
-            onClick={onStartPresentation}
-            className="btn btn-primary"
-            style={{ padding: '8px 18px', fontSize: '13px' }}
-          >
-            <span>Launch Demo</span>
-            <ArrowRight size={15} />
+            Upload Deck
           </button>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
-        {/* Pill Badge */}
-        <div className="badge badge-cyan" style={{ marginBottom: '20px', padding: '6px 14px', fontSize: '13px' }}>
-          <Sparkles size={14} />
-          <span>Interactive AI Deck Companion</span>
-        </div>
-
-        {/* Hero Title */}
-        <h1 style={{
-          fontSize: 'clamp(36px, 5vw, 64px)',
-          fontWeight: '800',
-          textAlign: 'center',
-          lineHeight: '1.15',
-          letterSpacing: '-1.5px',
-          color: 'var(--text-primary)',
-          maxWidth: '850px',
-          marginBottom: '16px'
+      {/* Main Editorial Content */}
+      <main style={{ position: 'relative', zIndex: 10, width: '100%', display: 'flex', flexDirection: 'column' }}>
+        
+        {/* Chapter 01: Hero */}
+        <section style={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          padding: 'clamp(100px, 16vh, 160px) clamp(20px, 6vw, 8vw) clamp(60px, 10vh, 100px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+          boxSizing: 'border-box'
         }}>
-          AI Presentation Assistant
-        </h1>
-
-        {/* Subtitle */}
-        <div style={{
-          fontSize: 'clamp(20px, 2.5vw, 28px)',
-          fontWeight: '600',
-          color: 'var(--accent-cyan)',
-          textAlign: 'center',
-          marginBottom: '20px',
-          letterSpacing: '-0.5px'
-        }}>
-          Watch. Ask. Understand.
-        </div>
-
-        {/* Supporting Text */}
-        <p style={{
-          fontSize: '17px',
-          color: 'var(--text-secondary)',
-          textAlign: 'center',
-          maxWidth: '640px',
-          lineHeight: '1.6',
-          marginBottom: '36px'
-        }}>
-          Explore technical presentations with an AI assistant that understands the exact slide you're viewing. Ask questions by voice or text and receive instant, context-aware answers.
-        </p>
-
-        {/* Primary CTA Buttons */}
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '60px' }}>
-          <button
-            onClick={onStartPresentation}
-            className="btn btn-primary"
-            style={{
-              padding: '14px 28px',
-              fontSize: '15px',
-              fontWeight: '700',
-              borderRadius: 'var(--radius-lg)',
-              boxShadow: '0 4px 20px rgba(56, 189, 248, 0.4)',
-              gap: '8px'
-            }}
-          >
-            <Play size={17} fill="currentColor" />
-            <span>Explore Technical Deck</span>
-          </button>
-
-          <button
-            onClick={() => setIsUploadOpen(true)}
-            className="btn btn-secondary"
-            style={{
-              padding: '14px 28px',
-              fontSize: '15px',
-              fontWeight: '600',
-              borderRadius: 'var(--radius-lg)',
-              gap: '8px',
-              border: '1px solid rgba(56, 189, 248, 0.35)'
-            }}
-          >
-            <UploadCloud size={17} style={{ color: 'var(--accent-cyan)' }} />
-            <span>Upload Your Own Presentation (.pptx / .pdf)</span>
-          </button>
-        </div>
-
-        {/* Featured Presentation Card */}
-        <div style={{
-          width: '100%',
-          backgroundColor: 'var(--bg-surface)',
-          border: '1px solid var(--border-medium)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '28px',
-          boxShadow: 'var(--shadow-lg)',
-          marginBottom: '48px',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '24px',
-          alignItems: 'center'
-        }}>
-          {/* Card Preview Details */}
           <div>
-            <div className="badge badge-emerald" style={{ marginBottom: '10px' }}>
-              Available Now
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: 'clamp(18px, 3vh, 32px)' }}>
+              <div style={{ width: '20px', height: '1px', background: '#38bdf8' }} />
+              <h4 style={{ color: '#38bdf8', fontSize: 'clamp(10px, 1.6vw, 11px)', letterSpacing: '4px', textTransform: 'uppercase', margin: 0 }}>
+                Chapter 01 &mdash; The Threshold
+              </h4>
             </div>
-            <h2 style={{ fontSize: '22px', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '8px' }}>
-              AI-Generated Technical Videos Strategy
-            </h2>
-            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: '1.6', marginBottom: '16px' }}>
-              A 12-slide comprehensive framework for translating complex engineering, semiconductor, and deep-tech architectures into high-retention video assets using generative AI workflows.
+
+            <h1 style={{
+              fontSize: 'clamp(42px, 8.5vw, 130px)',
+              fontWeight: '300',
+              lineHeight: '0.94',
+              color: '#ffffff',
+              letterSpacing: '-2px',
+              marginBottom: 'clamp(24px, 4vh, 40px)',
+              maxWidth: '1000px',
+              wordBreak: 'break-word'
+            }}>
+              Analyze <br/>
+              <span style={{ fontStyle: 'italic', color: '#6366f1' }}>Understand</span><br/>
+              Present.
+            </h1>
+
+            <p style={{
+              color: '#94a3b8',
+              fontSize: 'clamp(14px, 2vw, 16px)',
+              maxWidth: '480px',
+              lineHeight: '1.7',
+              marginBottom: 'clamp(32px, 5vh, 48px)',
+              fontWeight: '400'
+            }}>
+              An immersive editorial journey through your presentation data. Powered by advanced AI to synthesize, narrate, and interact with your slides in real-time.
             </p>
 
-            <div style={{ display: 'flex', gap: '16px', fontSize: '13px', color: 'var(--text-muted)' }}>
-              <span>• 12 Interactive Slides</span>
-              <span>• Clock Tree Synthesis Case Study</span>
-              <span>• Gemini Flash Powered</span>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center' }}>
+              <button
+                onClick={onStartPresentation}
+                onMouseEnter={() => setIsHovering(true)}
+                onMouseLeave={() => setIsHovering(false)}
+                style={{
+                  background: 'linear-gradient(135deg, #38bdf8, #6366f1)',
+                  color: '#020408',
+                  border: 'none',
+                  padding: 'clamp(14px, 2vw, 18px) clamp(24px, 4vw, 40px)',
+                  borderRadius: '6px',
+                  fontSize: 'clamp(11.5px, 1.8vw, 13px)',
+                  fontWeight: '800',
+                  letterSpacing: '2px',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  boxShadow: '0 4px 24px rgba(56, 189, 248, 0.35)',
+                  transition: 'transform 0.2s ease'
+                }}
+              >
+                <Play size={16} fill="currentColor" /> Enter The Experience
+              </button>
+
+              <button
+                onClick={() => setIsUploadOpen(true)}
+                onMouseEnter={() => setIsHovering(true)}
+                onMouseLeave={() => setIsHovering(false)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  color: '#e2e8f0',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  padding: 'clamp(14px, 2vw, 18px) clamp(20px, 3vw, 32px)',
+                  borderRadius: '6px',
+                  fontSize: 'clamp(11.5px, 1.8vw, 13px)',
+                  fontWeight: '600',
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '10px'
+                }}
+              >
+                <UploadCloud size={16} /> Choose File
+              </button>
             </div>
           </div>
+        </section>
 
-          {/* Quick Launch Preview */}
-          <div style={{
-            backgroundColor: 'var(--bg-app)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--radius-lg)',
-            overflow: 'hidden',
-            aspectRatio: '16/9',
-            position: 'relative',
-            cursor: 'pointer',
-            boxShadow: 'var(--shadow-md)'
+        {/* Chapter 02: Engine */}
+        <section
+          className="chapter-engine-section"
+          style={{
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            padding: 'clamp(80px, 14vh, 140px) clamp(20px, 6vw, 8vw)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+            backgroundColor: 'rgba(2, 4, 8, 0.55)',
+            boxSizing: 'border-box'
           }}
-          onClick={onStartPresentation}
-          >
-            <img
-              src="/presentations/ai-video-strategy/slide-01.png"
-              alt="Slide Preview"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
+        >
+          <div className="chapter-engine-container">
+            <h4 style={{ color: '#38bdf8', fontSize: 'clamp(10px, 1.6vw, 11px)', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: 'clamp(20px, 3vh, 32px)' }}>
+              Chapter 02 &mdash; The Engine
+            </h4>
+            <h2 style={{
+              fontSize: 'clamp(36px, 7vw, 96px)',
+              fontWeight: '300',
+              lineHeight: '1',
+              color: '#ffffff',
+              letterSpacing: '-2px',
+              marginBottom: 'clamp(24px, 3vh, 40px)',
+              maxWidth: '800px',
+              wordBreak: 'break-word'
+            }}>
+              Procedural <br/>
+              Intelligence.
+            </h2>
+            <p style={{
+              color: '#94a3b8',
+              fontSize: 'clamp(14px, 2vw, 16px)',
+              maxWidth: '480px',
+              lineHeight: '1.7',
+              fontWeight: '400'
+            }}>
+              Our deep-learning engine parses every technical diagram, metric, and bullet point. It extracts profound meaning from the noise, presenting you with unparalleled clarity.
+            </p>
+          </div>
+        </section>
+
+        {/* Chapter 03: Interaction */}
+        <section style={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          padding: 'clamp(80px, 14vh, 140px) clamp(20px, 6vw, 8vw)',
+          backgroundColor: 'rgba(2, 4, 8, 0.3)',
+          boxSizing: 'border-box'
+        }}>
+          <h4 style={{ color: '#6366f1', fontSize: 'clamp(10px, 1.6vw, 11px)', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: 'clamp(20px, 3vh, 32px)' }}>
+            Chapter 03 &mdash; Interaction
+          </h4>
+          <h2 style={{
+            fontSize: 'clamp(36px, 7vw, 96px)',
+            fontWeight: '300',
+            lineHeight: '1',
+            color: '#ffffff',
+            letterSpacing: '-2px',
+            marginBottom: 'clamp(36px, 6vh, 64px)',
+            maxWidth: '800px',
+            wordBreak: 'break-word'
+          }}>
+            Speak to <br/>
+            the Data.
+          </h2>
+          
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+            gap: 'clamp(24px, 4vw, 40px)',
+            maxWidth: '1000px'
+          }}>
             <div style={{
-              position: 'absolute',
-              inset: 0,
-              backgroundColor: 'rgba(8, 12, 20, 0.4)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'background-color 200ms ease'
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(8, 12, 20, 0.15)')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'rgba(8, 12, 20, 0.4)')}
-            >
-              <div style={{
-                width: '52px',
-                height: '52px',
-                borderRadius: '50%',
-                background: 'var(--accent-gradient)',
+              padding: 'clamp(24px, 4vw, 40px) 0',
+              borderTop: '1px solid rgba(56, 189, 248, 0.4)'
+            }}>
+              <h3 style={{ fontSize: 'clamp(17px, 2.5vw, 20px)', color: '#fff', marginBottom: '14px', fontWeight: '500' }}>
+                Voice Command
+              </h3>
+              <p style={{ color: '#94a3b8', fontSize: 'clamp(13.5px, 2vw, 15px)', lineHeight: '1.7' }}>
+                Hands-free exploration. Ask questions naturally and receive synthesized auditory responses customized to your slide context.
+              </p>
+            </div>
+            <div style={{
+              padding: 'clamp(24px, 4vw, 40px) 0',
+              borderTop: '1px solid rgba(99, 102, 241, 0.4)'
+            }}>
+              <h3 style={{ fontSize: 'clamp(17px, 2.5vw, 20px)', color: '#fff', marginBottom: '14px', fontWeight: '500' }}>
+                Text Context
+              </h3>
+              <p style={{ color: '#94a3b8', fontSize: 'clamp(13.5px, 2vw, 15px)', lineHeight: '1.7' }}>
+                Type specific technical queries. The AI uses the exact visual context of your current slide to deliver precise, accurate answers.
+              </p>
+            </div>
+          </div>
+        </section>
+        
+        {/* Footer Manifesto */}
+        <footer style={{
+          padding: 'clamp(48px, 8vh, 80px) clamp(20px, 6vw, 8vw) clamp(32px, 5vh, 48px)',
+          backgroundColor: '#020408',
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+          boxSizing: 'border-box'
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            flexWrap: 'wrap',
+            gap: '32px'
+          }}>
+            <div>
+              <h1 style={{ fontSize: 'clamp(24px, 4vw, 32px)', fontWeight: '300', color: '#fff', letterSpacing: '-1px', marginBottom: '14px' }}>
+                PPTxplains.
+              </h1>
+              <p style={{ color: '#64748b', fontSize: 'clamp(13px, 1.8vw, 14px)', maxWidth: '340px', lineHeight: '1.6' }}>
+                A deliberately minimal, highly interactive intelligence tool built for technical presentations.
+              </p>
+            </div>
+            <button
+              onClick={onStartPresentation}
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
+              style={{
+                background: '#fff',
+                color: '#000',
+                border: 'none',
+                padding: 'clamp(12px, 2vw, 16px) clamp(20px, 3vw, 32px)',
+                borderRadius: '4px',
+                fontSize: 'clamp(11px, 1.6vw, 12px)',
+                fontWeight: '800',
+                letterSpacing: '1px',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                color: '#060b14',
-                boxShadow: '0 4px 16px rgba(56, 189, 248, 0.5)'
-              }}>
-                <Play size={22} fill="currentColor" style={{ marginLeft: '3px' }} />
-              </div>
-            </div>
+                gap: '8px'
+              }}
+            >
+              Launch Platform <ArrowRight size={14} />
+            </button>
           </div>
-        </div>
-
-        {/* Feature Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '20px',
-          width: '100%'
-        }}>
-          {/* Feature 1 */}
-          <div style={{
-            backgroundColor: 'var(--bg-surface)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--radius-lg)',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px'
-          }}>
-            <div style={{ color: 'var(--accent-cyan)' }}>
-              <Clock size={24} />
-            </div>
-            <h3 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)' }}>
-              Automatic Progression
-            </h3>
-            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-              Slides progress automatically on configurable timers. Pause anytime to inspect waveforms or ask doubts.
-            </p>
-          </div>
-
-          {/* Feature 2 */}
-          <div style={{
-            backgroundColor: 'var(--bg-surface)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--radius-lg)',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px'
-          }}>
-            <div style={{ color: 'var(--accent-cyan)' }}>
-              <MessageSquare size={24} />
-            </div>
-            <h3 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)' }}>
-              Text Doubts
-            </h3>
-            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-              Type your questions directly. The AI assistant receives the exact context and metrics of your current slide.
-            </p>
-          </div>
-
-          {/* Feature 3 */}
-          <div style={{
-            backgroundColor: 'var(--bg-surface)',
-            border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--radius-lg)',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px'
-          }}>
-            <div style={{ color: 'var(--accent-cyan)' }}>
-              <Mic size={24} />
-            </div>
-            <h3 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)' }}>
-              Voice Mode & TTS
-            </h3>
-            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-              Speak your doubts hands-free via browser speech recognition and listen to natural spoken responses.
-            </p>
-          </div>
-        </div>
+        </footer>
       </main>
 
-      {/* Footer */}
-      <footer style={{
-        padding: '24px 32px',
-        borderTop: '1px solid var(--border-subtle)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        fontSize: '13px',
-        color: 'var(--text-muted)'
-      }}>
-        <div>AI Presentation Assistant &bull; Public No-Login Architecture</div>
-        <div>React &bull; Node.js &bull; Express &bull; Google Gemini API</div>
-      </footer>
-
-      {/* Feature 8: Upload / Ingest Presentation Modal */}
       <UploadPresentationModal
         isOpen={isUploadOpen}
         onClose={() => setIsUploadOpen(false)}

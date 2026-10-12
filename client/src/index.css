@@ -75,6 +75,7 @@ html, body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: transparent;
 }
 
 code, kbd, samp, pre {
@@ -114,7 +115,7 @@ code, kbd, samp, pre {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--bg-app);
+  background-color: transparent;
 }
 
 /* Subtle Animated Mesh / Grid Background */
@@ -673,3 +674,70 @@ code, kbd, samp, pre {
   line-height: 1.4 !important;
   letter-spacing: 0.3px !important;
 }
+
+/* ==========================================================================
+   RESPONSIVE DESIGN & EDITORIAL EXTENSIONS
+   ========================================================================== */
+
+/* Editorial Ambient Cursor (only on fine pointer with hover support) */
+@media (hover: hover) and (pointer: fine) {
+  .editorial-cursor {
+    display: block !important;
+  }
+}
+
+/* Chapter 02 Engine Responsive Alignment */
+.chapter-engine-section {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.chapter-engine-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+@media (max-width: 768px) {
+  .chapter-engine-section {
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+  .chapter-engine-container {
+    align-items: flex-start !important;
+  }
+}
+
+/* Mobile Adjustments for Presentation UI */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 56px;
+    --bottom-bar-height: 64px;
+  }
+
+  .app-header {
+    padding: 0 12px !important;
+    gap: 8px !important;
+  }
+
+  /* Slide Controls responsive collapsing */
+  .slide-controls-bar {
+    padding: 0 8px !important;
+    gap: 6px !important;
+  }
+
+  /* Subtitles on small screens */
+  .movie-subtitles-overlay {
+    bottom: 74px !important;
+    max-width: 94vw !important;
+  }
+
+  .movie-subtitles-pill {
+    padding: 8px 16px !important;
+  }
+
+  .movie-subtitles-pill span {
+    font-size: 14px !important;
+  }
+}
+

@@ -93,13 +93,13 @@ export function KnowledgeCheckModal({
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(4, 8, 16, 0.85)',
-        backdropFilter: 'blur(8px)',
+        backgroundColor: 'rgba(4, 8, 16, 0.88)',
+        backdropFilter: 'blur(10px)',
         zIndex: 99999,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '20px',
+        padding: 'clamp(10px, 3vw, 24px)',
         animation: 'fadeIn 200ms ease'
       }}
       onClick={onClose}
@@ -108,9 +108,10 @@ export function KnowledgeCheckModal({
         style={{
           width: '100%',
           maxWidth: '640px',
+          maxHeight: 'min(92vh, 760px)',
           backgroundColor: '#0c1424',
           border: '1px solid rgba(56, 189, 248, 0.25)',
-          borderRadius: '16px',
+          borderRadius: 'clamp(12px, 2vw, 18px)',
           display: 'flex',
           flexDirection: 'column',
           boxShadow: '0 24px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(56, 189, 248, 0.15)',
@@ -121,15 +122,17 @@ export function KnowledgeCheckModal({
         {/* Modal Header */}
         <div
           style={{
-            padding: '16px 22px',
+            padding: 'clamp(12px, 2.5vw, 16px) clamp(16px, 3vw, 22px)',
             borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            backgroundColor: '#0f192c'
+            gap: '12px',
+            backgroundColor: '#0f192c',
+            flexShrink: 0
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
             <div
               style={{
                 width: '32px',
@@ -139,16 +142,17 @@ export function KnowledgeCheckModal({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#38bdf8'
+                color: '#38bdf8',
+                flexShrink: 0
               }}
             >
               <HelpCircle size={18} />
             </div>
-            <div>
-              <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#f8fafc', margin: 0 }}>
-                Comprehension Knowledge Check
+            <div style={{ minWidth: 0 }}>
+              <h3 style={{ fontSize: 'clamp(13px, 2vw, 15px)', fontWeight: '700', color: '#f8fafc', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                Comprehension Check
               </h3>
-              <p style={{ fontSize: '12px', color: '#94a3b8', margin: 0 }}>
+              <p style={{ fontSize: 'clamp(11px, 1.8vw, 12px)', color: '#94a3b8', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 Slide {slide.slideNumber}: {slide.title}
               </p>
             </div>
@@ -157,7 +161,7 @@ export function KnowledgeCheckModal({
           <button
             onClick={onClose}
             className="btn btn-ghost btn-icon"
-            style={{ width: '32px', height: '32px' }}
+            style={{ width: '32px', height: '32px', flexShrink: 0 }}
             title="Close quiz"
             aria-label="Close quiz"
           >
@@ -165,10 +169,17 @@ export function KnowledgeCheckModal({
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
+        {/* Modal Body with internal scrolling */}
+        <div style={{
+          padding: 'clamp(16px, 3.5vw, 24px)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px',
+          overflowY: 'auto',
+          flex: 1
+        }}>
           {/* Question Text */}
-          <div style={{ fontSize: '16px', fontWeight: '600', color: '#ffffff', lineHeight: '1.5' }}>
+          <div style={{ fontSize: 'clamp(14px, 2.2vw, 16px)', fontWeight: '600', color: '#ffffff', lineHeight: '1.5' }}>
             {quiz.question}
           </div>
 
@@ -206,23 +217,26 @@ export function KnowledgeCheckModal({
                   onClick={() => handleSelect(idx)}
                   disabled={isAnswered}
                   style={{
-                    padding: '12px 16px',
+                    padding: 'clamp(10px, 2vw, 14px) clamp(12px, 2.5vw, 16px)',
                     borderRadius: '10px',
                     border,
                     backgroundColor: bg,
                     color: textColor,
-                    fontSize: '13.5px',
+                    fontSize: 'clamp(12.5px, 2vw, 13.5px)',
                     textAlign: 'left',
                     cursor: isAnswered ? 'default' : 'pointer',
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     justifyContent: 'space-between',
                     gap: '12px',
                     transition: 'all 150ms ease',
-                    fontWeight: isAnswered && isOptionCorrect ? '600' : '400'
+                    fontWeight: isAnswered && isOptionCorrect ? '600' : '400',
+                    lineHeight: '1.45',
+                    width: '100%',
+                    wordBreak: 'break-word'
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flex: 1, minWidth: 0 }}>
                     <span
                       style={{
                         width: '24px',
@@ -235,19 +249,20 @@ export function KnowledgeCheckModal({
                         fontSize: '11px',
                         fontWeight: '700',
                         color: '#94a3b8',
-                        flexShrink: 0
+                        flexShrink: 0,
+                        marginTop: '1px'
                       }}
                     >
                       {String.fromCharCode(65 + idx)}
                     </span>
-                    <span>{opt}</span>
+                    <span style={{ flex: 1 }}>{opt}</span>
                   </div>
 
                   {isAnswered && isOptionCorrect && (
-                    <CheckCircle2 size={18} style={{ color: '#10b981', flexShrink: 0 }} />
+                    <CheckCircle2 size={18} style={{ color: '#10b981', flexShrink: 0, marginTop: '3px' }} />
                   )}
                   {isAnswered && isCurrentSelected && !isOptionCorrect && (
-                    <AlertCircle size={18} style={{ color: '#ef4444', flexShrink: 0 }} />
+                    <AlertCircle size={18} style={{ color: '#ef4444', flexShrink: 0, marginTop: '3px' }} />
                   )}
                 </button>
               );
@@ -258,7 +273,7 @@ export function KnowledgeCheckModal({
           {isAnswered && (
             <div
               style={{
-                padding: '14px 16px',
+                padding: '12px 16px',
                 borderRadius: '10px',
                 backgroundColor: isCorrect ? 'rgba(16, 185, 129, 0.08)' : 'rgba(239, 68, 68, 0.08)',
                 border: `1px solid ${isCorrect ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
@@ -291,18 +306,21 @@ export function KnowledgeCheckModal({
         {/* Modal Footer */}
         <div
           style={{
-            padding: '14px 22px',
+            padding: 'clamp(12px, 2.5vw, 16px) clamp(16px, 3vw, 22px)',
             borderTop: '1px solid rgba(255, 255, 255, 0.08)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            backgroundColor: '#0f192c'
+            flexWrap: 'wrap',
+            gap: '10px',
+            backgroundColor: '#0f192c',
+            flexShrink: 0
           }}
         >
           <button
             onClick={handleReset}
             className="btn btn-ghost"
-            style={{ fontSize: '12px', padding: '6px 12px', gap: '6px' }}
+            style={{ fontSize: '12px', padding: '8px 14px', gap: '6px' }}
             disabled={!isAnswered}
           >
             <RotateCcw size={13} />
@@ -312,7 +330,7 @@ export function KnowledgeCheckModal({
           <button
             onClick={onClose}
             className="btn btn-primary"
-            style={{ fontSize: '12px', padding: '6px 16px', gap: '6px' }}
+            style={{ fontSize: '12px', padding: '8px 18px', gap: '6px', marginLeft: 'auto' }}
           >
             <span>{isAnswered ? 'Continue Presentation' : 'Skip Check'}</span>
             <ArrowRight size={13} />
