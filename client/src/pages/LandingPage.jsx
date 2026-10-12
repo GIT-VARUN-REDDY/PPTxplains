@@ -6,19 +6,12 @@ import { CanvasBackground } from '../components/CanvasBackground.jsx';
 export function LandingPage({ onStartPresentation }) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
-  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
-  const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
-    const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
-
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
@@ -26,26 +19,6 @@ export function LandingPage({ onStartPresentation }) {
     <div style={{ position: 'relative', width: '100%', minHeight: '100vh', backgroundColor: '#010204', overflowX: 'hidden' }}>
       {/* 3D Background */}
       <CanvasBackground />
-
-      {/* Subtle Interactive Ambient Cursor (Only for pointing devices) */}
-      <div
-        className="editorial-cursor"
-        style={{
-          position: 'fixed',
-          top: mousePos.y,
-          left: mousePos.x,
-          width: isHovering ? '44px' : '24px',
-          height: isHovering ? '44px' : '24px',
-          borderRadius: '50%',
-          border: '1px solid rgba(56, 189, 248, 0.4)',
-          backgroundColor: 'rgba(99, 102, 241, 0.08)',
-          pointerEvents: 'none',
-          transform: 'translate(-50%, -50%)',
-          transition: 'width 0.2s ease, height 0.2s ease, background-color 0.2s ease',
-          zIndex: 9999,
-          display: 'none' // Enabled via media query in index.css for hover:hover
-        }}
-      />
 
       {/* Header */}
       <header style={{
@@ -75,8 +48,6 @@ export function LandingPage({ onStartPresentation }) {
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <button
             onClick={() => setIsUploadOpen(true)}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
             style={{
               background: 'transparent',
               border: '1px solid rgba(56, 189, 248, 0.35)',
@@ -117,7 +88,7 @@ export function LandingPage({ onStartPresentation }) {
             </div>
 
             <h1 style={{
-              fontSize: 'clamp(42px, 8.5vw, 130px)',
+              fontSize: 'clamp(48px, 9.5vw, 140px)',
               fontWeight: '300',
               lineHeight: '0.94',
               color: '#ffffff',
@@ -127,8 +98,7 @@ export function LandingPage({ onStartPresentation }) {
               wordBreak: 'break-word'
             }}>
               Analyze <br/>
-              <span style={{ fontStyle: 'italic', color: '#6366f1' }}>Understand</span><br/>
-              Present.
+              <span style={{ fontStyle: 'italic', color: '#6366f1' }}>Understand.</span>
             </h1>
 
             <p style={{
@@ -145,8 +115,6 @@ export function LandingPage({ onStartPresentation }) {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center' }}>
               <button
                 onClick={onStartPresentation}
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
                 style={{
                   background: 'linear-gradient(135deg, #38bdf8, #6366f1)',
                   color: '#020408',
@@ -170,8 +138,6 @@ export function LandingPage({ onStartPresentation }) {
 
               <button
                 onClick={() => setIsUploadOpen(true)}
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
                 style={{
                   background: 'rgba(255, 255, 255, 0.04)',
                   color: '#e2e8f0',
@@ -319,8 +285,6 @@ export function LandingPage({ onStartPresentation }) {
             </div>
             <button
               onClick={onStartPresentation}
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
               style={{
                 background: '#fff',
                 color: '#000',

@@ -679,13 +679,6 @@ code, kbd, samp, pre {
    RESPONSIVE DESIGN & EDITORIAL EXTENSIONS
    ========================================================================== */
 
-/* Editorial Ambient Cursor (only on fine pointer with hover support) */
-@media (hover: hover) and (pointer: fine) {
-  .editorial-cursor {
-    display: block !important;
-  }
-}
-
 /* Chapter 02 Engine Responsive Alignment */
 .chapter-engine-section {
   align-items: flex-end;
