@@ -47,7 +47,7 @@ function EndlessPath() {
 function CyanMoon() {
   return (
     <Sphere args={[20, 64, 64]} position={[0, 15, -180]}>
-      <meshBasicMaterial color="#38bdf8" />
+      <meshBasicMaterial color="#3b82f6" />
     </Sphere>
   );
 }
@@ -87,7 +87,7 @@ function AtmosphericParticles() {
     <Points ref={ref} positions={positions} stride={3} frustumCulled={false}>
       <PointMaterial
         transparent
-        color="#818cf8"
+        color="#60a5fa"
         size={0.15}
         sizeAttenuation={true}
         depthWrite={false}
@@ -153,11 +153,11 @@ export function CanvasBackground() {
         {/* Cinematic Lighting Setup */}
         <ambientLight intensity={0.25} />
         {/* Moon backlight */}
-        <pointLight position={[0, 15, -120]} intensity={4.5} color="#38bdf8" distance={220} />
+        <pointLight position={[0, 15, -120]} intensity={4.5} color="#3b82f6" distance={220} />
         {/* Rim light left */}
-        <spotLight position={[-15, 6, 10]} angle={0.35} penumbra={1} intensity={3.2} color="#6366f1" />
+        <spotLight position={[-15, 6, 10]} angle={0.35} penumbra={1} intensity={3.2} color="#1d4ed8" />
         {/* Rim light right */}
-        <spotLight position={[15, 6, 10]} angle={0.35} penumbra={1} intensity={3.2} color="#38bdf8" />
+        <spotLight position={[15, 6, 10]} angle={0.35} penumbra={1} intensity={3.2} color="#3b82f6" />
         
         <EndlessPath />
         <CyanMoon />

@@ -38,8 +38,8 @@ export function LandingPage({ onStartPresentation }) {
         boxSizing: 'border-box'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Sparkles size={18} color="#38bdf8" />
-          <span style={{ fontSize: '13px', fontWeight: '800', letterSpacing: '3px', color: '#f8fafc', textTransform: 'uppercase' }}>
+          <Sparkles size={18} color="#3b82f6" />
+          <span style={{ fontSize: '13px', fontWeight: '800', letterSpacing: '3px', color: '#ffffff', textTransform: 'uppercase' }}>
             PPTxplains
           </span>
         </div>
@@ -48,8 +48,8 @@ export function LandingPage({ onStartPresentation }) {
             onClick={() => setIsUploadOpen(true)}
             style={{
               background: 'transparent',
-              border: '1px solid rgba(56, 189, 248, 0.35)',
-              color: '#38bdf8',
+              border: '1px solid rgba(59, 130, 246, 0.45)',
+              color: '#60a5fa',
               padding: '8px 18px',
               borderRadius: '6px',
               fontSize: '11.5px',
@@ -80,8 +80,8 @@ export function LandingPage({ onStartPresentation }) {
         }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: 'clamp(18px, 3vh, 32px)' }}>
-              <div style={{ width: '20px', height: '1px', background: '#38bdf8' }} />
-              <h4 style={{ color: '#38bdf8', fontSize: 'clamp(10px, 1.6vw, 11px)', letterSpacing: '4px', textTransform: 'uppercase', margin: 0 }}>
+              <div style={{ width: '20px', height: '1px', background: '#3b82f6' }} />
+              <h4 style={{ color: '#60a5fa', fontSize: 'clamp(10px, 1.6vw, 11px)', letterSpacing: '4px', textTransform: 'uppercase', margin: 0 }}>
                 Chapter 01 &mdash; The Threshold
               </h4>
             </div>
@@ -97,11 +97,11 @@ export function LandingPage({ onStartPresentation }) {
               wordBreak: 'break-word'
             }}>
               Analyze <br/>
-              <span style={{ fontStyle: 'italic', color: '#6366f1' }}>Understand.</span>
+              <span style={{ fontStyle: 'italic', color: '#3b82f6' }}>Understand.</span>
             </h1>
 
             <p style={{
-              color: '#94a3b8',
+              color: '#93c5fd',
               fontSize: 'clamp(14px, 2vw, 16px)',
               maxWidth: '480px',
               lineHeight: '1.7',
@@ -115,20 +115,20 @@ export function LandingPage({ onStartPresentation }) {
               <button
                 onClick={onStartPresentation}
                 style={{
-                  background: 'linear-gradient(135deg, #38bdf8, #6366f1)',
-                  color: '#020408',
+                  background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  color: '#ffffff',
                   border: 'none',
                   padding: 'clamp(14px, 2vw, 18px) clamp(24px, 4vw, 40px)',
                   borderRadius: '6px',
                   fontSize: 'clamp(11.5px, 1.8vw, 13px)',
-                  fontWeight: '800',
+                  fontWeight: '700',
                   letterSpacing: '2px',
                   textTransform: 'uppercase',
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '12px',
-                  boxShadow: '0 4px 24px rgba(56, 189, 248, 0.35)',
+                  boxShadow: '0 4px 24px rgba(37, 99, 235, 0.4)',
                   transition: 'transform 0.2s ease'
                 }}
               >
@@ -174,7 +174,7 @@ export function LandingPage({ onStartPresentation }) {
           }}
         >
           <div className="chapter-engine-container">
-            <h4 style={{ color: '#38bdf8', fontSize: 'clamp(10px, 1.6vw, 11px)', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: 'clamp(20px, 3vh, 32px)' }}>
+            <h4 style={{ color: '#60a5fa', fontSize: 'clamp(10px, 1.6vw, 11px)', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: 'clamp(20px, 3vh, 32px)' }}>
               Chapter 02 &mdash; The Engine
             </h4>
             <h2 style={{
@@ -191,7 +191,7 @@ export function LandingPage({ onStartPresentation }) {
               Intelligence.
             </h2>
             <p style={{
-              color: '#94a3b8',
+              color: '#93c5fd',
               fontSize: 'clamp(14px, 2vw, 16px)',
               maxWidth: '480px',
               lineHeight: '1.7',
@@ -212,7 +212,7 @@ export function LandingPage({ onStartPresentation }) {
           backgroundColor: 'rgba(2, 4, 8, 0.3)',
           boxSizing: 'border-box'
         }}>
-          <h4 style={{ color: '#6366f1', fontSize: 'clamp(10px, 1.6vw, 11px)', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: 'clamp(20px, 3vh, 32px)' }}>
+          <h4 style={{ color: '#3b82f6', fontSize: 'clamp(10px, 1.6vw, 11px)', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: 'clamp(20px, 3vh, 32px)' }}>
             Chapter 03 &mdash; Interaction
           </h4>
           <h2 style={{
@@ -237,23 +237,23 @@ export function LandingPage({ onStartPresentation }) {
           }}>
             <div style={{
               padding: 'clamp(24px, 4vw, 40px) 0',
-              borderTop: '1px solid rgba(56, 189, 248, 0.4)'
+              borderTop: '1px solid rgba(59, 130, 246, 0.4)'
             }}>
               <h3 style={{ fontSize: 'clamp(17px, 2.5vw, 20px)', color: '#fff', marginBottom: '14px', fontWeight: '500' }}>
                 Voice Command
               </h3>
-              <p style={{ color: '#94a3b8', fontSize: 'clamp(13.5px, 2vw, 15px)', lineHeight: '1.7' }}>
+              <p style={{ color: '#93c5fd', fontSize: 'clamp(13.5px, 2vw, 15px)', lineHeight: '1.7' }}>
                 Hands-free exploration. Ask questions naturally and receive synthesized auditory responses customized to your slide context.
               </p>
             </div>
             <div style={{
               padding: 'clamp(24px, 4vw, 40px) 0',
-              borderTop: '1px solid rgba(99, 102, 241, 0.4)'
+              borderTop: '1px solid rgba(37, 99, 235, 0.4)'
             }}>
               <h3 style={{ fontSize: 'clamp(17px, 2.5vw, 20px)', color: '#fff', marginBottom: '14px', fontWeight: '500' }}>
                 Text Context
               </h3>
-              <p style={{ color: '#94a3b8', fontSize: 'clamp(13.5px, 2vw, 15px)', lineHeight: '1.7' }}>
+              <p style={{ color: '#93c5fd', fontSize: 'clamp(13.5px, 2vw, 15px)', lineHeight: '1.7' }}>
                 Type specific technical queries. The AI uses the exact visual context of your current slide to deliver precise, accurate answers.
               </p>
             </div>

@@ -4,31 +4,31 @@
    ========================================================================== */
 
 :root {
-  /* Color Palette */
-  --bg-app: #080c14;
-  --bg-surface: #0e1524;
-  --bg-surface-elevated: #131d31;
-  --bg-surface-glass: rgba(14, 21, 36, 0.85);
-  --border-subtle: #1e293b;
-  --border-medium: #2a3a55;
-  --border-focus: #38bdf8;
+  /* Color Palette - Pure Black, Navy Blue, Royal/Electric Blue, and Crisp White */
+  --bg-app: #030712;               /* True Deep Navy / Black */
+  --bg-surface: #0a1128;           /* Classic Deep Navy */
+  --bg-surface-elevated: #101c3d;  /* Elevated Navy Blue */
+  --bg-surface-glass: rgba(10, 17, 40, 0.88);
+  --border-subtle: #1c2b4f;        /* Navy Border */
+  --border-medium: #2a3e6f;        /* Medium Navy Border */
+  --border-focus: #2563eb;         /* Pure Blue Focus */
 
   /* Typography Colors */
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-accent: #38bdf8;
-  --text-success: #10b981;
-  --text-warning: #f59e0b;
-  --text-danger: #ef4444;
+  --text-primary: #ffffff;         /* Pure White */
+  --text-secondary: #93c5fd;       /* Soft Ice Blue */
+  --text-muted: #60a5fa;           /* Subdued Blue */
+  --text-accent: #3b82f6;          /* Professional Blue */
+  --text-success: #60a5fa;
+  --text-warning: #93c5fd;
+  --text-danger: #3b82f6;
 
-  /* Accent & Gradients */
-  --accent-cyan: #38bdf8;
-  --accent-cyan-dim: rgba(56, 189, 248, 0.12);
-  --accent-cyan-glow: rgba(56, 189, 248, 0.25);
-  --accent-indigo: #6366f1;
-  --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
-  --surface-gradient: linear-gradient(180deg, #10192b 0%, #0b111e 100%);
+  /* Accent & Gradients - Royal/Cobalt/Electric Blue to Deep Navy */
+  --accent-cyan: #3b82f6;          /* Clean Royal Blue */
+  --accent-cyan-dim: rgba(59, 130, 246, 0.15);
+  --accent-cyan-glow: rgba(59, 130, 246, 0.3);
+  --accent-indigo: #2563eb;        /* Deep Vibrant Blue */
+  --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  --surface-gradient: linear-gradient(180deg, #0e1738 0%, #060c20 100%);
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.35);
