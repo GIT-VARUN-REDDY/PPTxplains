@@ -299,11 +299,34 @@ code, kbd, samp, pre {
 
 @keyframes waveBar {
   0%, 100% {
-    height: 4px;
+    height: 3px;
+    opacity: 0.6;
   }
   50% {
-    height: 12px;
+    height: 13px;
+    opacity: 1;
   }
+}
+
+.live-wave-bar {
+  width: 2.5px;
+  background-color: currentColor;
+  border-radius: 2px;
+  display: inline-block;
+  animation: waveBar 800ms ease-in-out infinite;
+}
+
+.live-wave-bar.wave-1 {
+  animation-delay: 0ms;
+}
+.live-wave-bar.wave-2 {
+  animation-delay: 180ms;
+}
+.live-wave-bar.wave-3 {
+  animation-delay: 360ms;
+}
+.live-wave-bar.wave-4 {
+  animation-delay: 120ms;
 }
 
 /* Real-time SVG Border Drawing Animation */

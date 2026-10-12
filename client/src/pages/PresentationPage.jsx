@@ -625,6 +625,7 @@ export function PresentationPage({
       {/* Bottom Slide Progression & Playback Controls */}
       <SlideControls
         isPlaying={isPlaying}
+        isSpeaking={isSpeaking}
         progress={progress}
         durationSec={durationSec}
         currentSlideIndex={currentSlideIndex}

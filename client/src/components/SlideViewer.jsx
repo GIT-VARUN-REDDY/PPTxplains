@@ -29,6 +29,7 @@ function SlideViewerComponent({
   const slideWrapperRef = useRef(null);
   const [fadeState, setFadeState] = useState('visible'); // 'visible' | 'fading'
   const [hasImageError, setHasImageError] = useState(false);
+  const touchStartRef = useRef(null);
 
   // Smooth slide transition effect on slide change
   useEffect(() => {
@@ -39,6 +40,36 @@ function SlideViewerComponent({
     }, 120);
     return () => clearTimeout(timer);
   }, [slideIndex, slide?.id, slide?.slideNumber]);
+
+  // Touch Swipe Gesture Handlers (Mobile & Tablet)
+  const handleTouchStart = (e) => {
+    if (e.touches && e.touches.length === 1) {
+      touchStartRef.current = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+        time: Date.now()
+      };
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    if (!touchStartRef.current || !e.changedTouches || e.changedTouches.length === 0) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartRef.current.x;
+    const deltaY = e.changedTouches[0].clientY - touchStartRef.current.y;
+    const deltaTime = Date.now() - touchStartRef.current.time;
+    touchStartRef.current = null;
+
+    // Must be a distinct horizontal flick (at least 45px, mostly horizontal, within 450ms)
+    if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5 && deltaTime < 450) {
+      if (deltaX < 0 && slideIndex < totalSlides - 1) {
+        // Swiped Left -> Advance to Next Slide
+        onNext?.();
+      } else if (deltaX > 0 && slideIndex > 0) {
+        // Swiped Right -> Go to Previous Slide
+        onPrev?.();
+      }
+    }
+  };
 
   // Robust URI normalization (handles legacy data:image/svg+xml;utf8, or malformed data URIs)
   const normalizedImageSrc = useMemo(() => {
@@ -67,7 +98,13 @@ function SlideViewerComponent({
   }
 
   return (
-    <div className="slide-stage" tabIndex={0} style={{ position: 'relative' }}>
+    <div
+      className="slide-stage"
+      tabIndex={0}
+      style={{ position: 'relative', touchAction: 'pan-y' }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Slide Canvas Container */}
       <div
         ref={slideWrapperRef}

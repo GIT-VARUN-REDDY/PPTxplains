@@ -16,6 +16,7 @@ import {
 
 function SlideControlsComponent({
   isPlaying,
+  isSpeaking = false,
   progress,
   durationSec,
   currentSlideIndex,
@@ -273,11 +274,11 @@ function SlideControlsComponent({
             className={`btn ${isPlaying ? 'btn-danger' : 'btn-primary'}`}
             style={{
               height: '42px',
-              padding: '0 24px',
+              padding: '0 22px',
               fontSize: '14px',
               fontWeight: '700',
               letterSpacing: '0.4px',
-              minWidth: '115px',
+              minWidth: '120px',
               gap: '8px'
             }}
             title={isPlaying ? 'Stop Presentation & Voice (Space)' : 'Start Presentation & Voice (Space)'}
@@ -285,7 +286,25 @@ function SlideControlsComponent({
           >
             {isPlaying ? (
               <>
-                <Square size={13} fill="currentColor" />
+                {isSpeaking ? (
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '2px',
+                      height: '14px',
+                      marginRight: '2px'
+                    }}
+                    title="AI Presenter Speaking"
+                  >
+                    <span className="live-wave-bar wave-1" />
+                    <span className="live-wave-bar wave-2" />
+                    <span className="live-wave-bar wave-3" />
+                    <span className="live-wave-bar wave-4" />
+                  </div>
+                ) : (
+                  <Square size={13} fill="currentColor" />
+                )}
                 <span>STOP</span>
               </>
             ) : (
