@@ -711,13 +711,21 @@ code, kbd, samp, pre {
 /* Mobile Adjustments for Presentation UI */
 @media (max-width: 768px) {
   :root {
-    --header-height: 56px;
+    --header-height: 54px;
     --bottom-bar-height: 64px;
   }
 
-  .app-header {
-    padding: 0 12px !important;
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  .header-container {
+    padding: 0 8px !important;
     gap: 8px !important;
+  }
+
+  .header-divider {
+    display: none !important;
   }
 
   /* Slide Controls responsive collapsing */
@@ -738,6 +746,12 @@ code, kbd, samp, pre {
 
   .movie-subtitles-pill span {
     font-size: 14px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hide-on-small-mobile {
+    display: none !important;
   }
 }
 

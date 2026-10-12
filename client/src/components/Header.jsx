@@ -56,14 +56,14 @@ function HeaderComponent({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 18px',
+        padding: '0 16px',
         position: 'relative',
         zIndex: 20,
-        gap: '16px'
+        gap: '8px'
       }}
     >
       {/* Left: Home Navigation, Logo, Title & Slide Counter */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: '1 1 auto' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: '1 1 auto' }}>
         {onBackToHome && (
           <button
             onClick={onBackToHome}
@@ -76,8 +76,9 @@ function HeaderComponent({
           </button>
         )}
 
-        {/* Executive Deck Brand Icon */}
+        {/* Executive Deck Brand Icon (hidden on small mobile to save space) */}
         <div
+          className="hide-on-small-mobile"
           style={{
             width: '32px',
             height: '32px',
@@ -95,18 +96,20 @@ function HeaderComponent({
         </div>
 
         {/* Title & Integrated Slide Pill */}
-        <div style={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: '8px', flex: '1 1 auto' }}>
           <h1
             style={{
-              fontSize: '14.5px',
+              fontSize: '13.5px',
               fontWeight: '600',
               color: 'var(--text-primary, #f8fafc)',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               letterSpacing: '-0.2px',
-              margin: 0
+              margin: 0,
+              maxWidth: 'min(180px, 32vw)'
             }}
+            title={title || 'AI-Generated Technical Videos Strategy'}
           >
             {title || 'AI-Generated Technical Videos Strategy'}
           </h1>
@@ -116,11 +119,11 @@ function HeaderComponent({
               display: 'inline-flex',
               alignItems: 'center',
               gap: '4px',
-              padding: '3px 8px',
+              padding: '2px 7px',
               borderRadius: '6px',
               backgroundColor: 'rgba(255, 255, 255, 0.04)',
               border: '1px solid rgba(255, 255, 255, 0.08)',
-              fontSize: '11.5px',
+              fontSize: '11px',
               color: 'var(--text-secondary, #94a3b8)',
               flexShrink: 0
             }}
@@ -133,7 +136,7 @@ function HeaderComponent({
       </div>
 
       {/* Right Controls: Grouped Clusters */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
         {/* Cluster 1: Playback Toggles (Segmented Glass Pill) */}
         <div
           style={{
@@ -152,8 +155,8 @@ function HeaderComponent({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              padding: '5px 10px',
+              gap: '5px',
+              padding: '5px 8px',
               borderRadius: '6px',
               fontSize: '12px',
               fontWeight: '500',
@@ -167,11 +170,11 @@ function HeaderComponent({
             aria-label="Toggle Auto Slide"
           >
             <PlayCircle size={14} style={{ color: autoSlide ? '#38bdf8' : 'var(--text-muted, #64748b)' }} />
-            <span>Auto Slide</span>
+            <span className="hide-on-mobile">Auto</span>
             <span
               style={{
-                width: '6px',
-                height: '6px',
+                width: '5px',
+                height: '5px',
                 borderRadius: '50%',
                 backgroundColor: autoSlide ? '#38bdf8' : 'rgba(255, 255, 255, 0.2)',
                 boxShadow: autoSlide ? '0 0 6px rgba(56, 189, 248, 0.8)' : 'none'
@@ -185,8 +188,8 @@ function HeaderComponent({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
-              padding: '5px 10px',
+              gap: '5px',
+              padding: '5px 8px',
               borderRadius: '6px',
               fontSize: '12px',
               fontWeight: '500',
@@ -200,11 +203,11 @@ function HeaderComponent({
             aria-label="Toggle Auto Voice Narration"
           >
             {autoNarrate ? <Volume2 size={14} style={{ color: '#38bdf8' }} /> : <VolumeX size={14} />}
-            <span>Voice</span>
+            <span className="hide-on-mobile">Voice</span>
             <span
               style={{
-                width: '6px',
-                height: '6px',
+                width: '5px',
+                height: '5px',
                 borderRadius: '50%',
                 backgroundColor: autoNarrate ? '#38bdf8' : 'rgba(255, 255, 255, 0.2)',
                 boxShadow: autoNarrate ? '0 0 6px rgba(56, 189, 248, 0.8)' : 'none'
@@ -218,8 +221,8 @@ function HeaderComponent({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '5px',
-              padding: '5px 9px',
+              gap: '4px',
+              padding: '5px 8px',
               borderRadius: '6px',
               fontSize: '12px',
               fontWeight: '500',
@@ -238,18 +241,18 @@ function HeaderComponent({
         </div>
 
         {/* Subtle Vertical Hairline Divider */}
-        <div style={{ width: '1px', height: '22px', backgroundColor: 'var(--border-subtle, rgba(255,255,255,0.08))' }} />
+        <div className="header-divider" style={{ width: '1px', height: '20px', backgroundColor: 'var(--border-subtle, rgba(255,255,255,0.08))' }} />
 
         {/* Cluster 2: Workspace Tools */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
           {/* Slides Grid Overview */}
           <button
             onClick={onOpenOverview}
             className="btn btn-secondary"
             style={{
               fontSize: '12px',
-              padding: '5px 10px',
-              height: '32px',
+              padding: '5px 8px',
+              height: '30px',
               gap: '5px',
               backgroundColor: 'var(--bg-surface-elevated, #111827)',
               border: '1px solid var(--border-subtle, rgba(255,255,255,0.08))'
@@ -261,15 +264,15 @@ function HeaderComponent({
             <span className="hide-on-mobile">Slides</span>
           </button>
 
-          {/* Executive Brief */}
+          {/* Executive Brief (hidden on small mobile) */}
           {onOpenBrief && (
             <button
               onClick={onOpenBrief}
-              className="btn btn-secondary"
+              className="btn btn-secondary hide-on-small-mobile"
               style={{
                 fontSize: '12px',
-                padding: '5px 10px',
-                height: '32px',
+                padding: '5px 8px',
+                height: '30px',
                 gap: '5px',
                 backgroundColor: 'var(--bg-surface-elevated, #111827)',
                 border: '1px solid var(--border-subtle, rgba(255,255,255,0.08))'
@@ -289,8 +292,8 @@ function HeaderComponent({
               className="btn btn-secondary"
               style={{
                 fontSize: '12px',
-                padding: '5px 10px',
-                height: '32px',
+                padding: '5px 8px',
+                height: '30px',
                 gap: '5px',
                 backgroundColor: 'var(--bg-surface-elevated, #111827)',
                 border: '1px solid var(--border-subtle, rgba(255,255,255,0.08))'
@@ -305,20 +308,20 @@ function HeaderComponent({
         </div>
 
         {/* Subtle Vertical Hairline Divider */}
-        <div style={{ width: '1px', height: '22px', backgroundColor: 'var(--border-subtle, rgba(255,255,255,0.08))' }} />
+        <div className="header-divider" style={{ width: '1px', height: '20px', backgroundColor: 'var(--border-subtle, rgba(255,255,255,0.08))' }} />
 
         {/* Cluster 3: Utilities (Clean Compact Icon Buttons) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
           {/* Upload Presentation */}
           {onOpenUpload && (
             <button
               onClick={onOpenUpload}
-              className="btn btn-ghost btn-icon"
-              style={{ height: '32px', width: '32px', borderRadius: '6px' }}
+              className="btn btn-ghost btn-icon hide-on-small-mobile"
+              style={{ height: '30px', width: '30px', borderRadius: '6px' }}
               title="Upload Presentation (.pptx / .pdf)"
               aria-label="Upload Presentation"
             >
-              <UploadCloud size={15} style={{ color: 'var(--text-secondary, #94a3b8)' }} />
+              <UploadCloud size={14} style={{ color: 'var(--text-secondary, #94a3b8)' }} />
             </button>
           )}
 
@@ -326,14 +329,14 @@ function HeaderComponent({
           <button
             onClick={handleShare}
             className="btn btn-ghost btn-icon"
-            style={{ height: '32px', width: '32px', borderRadius: '6px' }}
+            style={{ height: '30px', width: '30px', borderRadius: '6px' }}
             title={copied ? `Slide ${currentSlideNumber} link copied to clipboard!` : 'Copy Shareable Slide Link'}
             aria-label="Copy Shareable Presentation Link"
           >
             {copied ? (
-              <Check size={15} style={{ color: 'var(--text-success, #10b981)' }} />
+              <Check size={14} style={{ color: 'var(--text-success, #10b981)' }} />
             ) : (
-              <Share2 size={15} style={{ color: 'var(--text-secondary, #94a3b8)' }} />
+              <Share2 size={14} style={{ color: 'var(--text-secondary, #94a3b8)' }} />
             )}
           </button>
 
@@ -341,11 +344,11 @@ function HeaderComponent({
           <button
             onClick={onToggleFullscreen}
             className="btn btn-ghost btn-icon"
-            style={{ height: '32px', width: '32px', borderRadius: '6px' }}
+            style={{ height: '30px', width: '30px', borderRadius: '6px' }}
             title={isFullscreen ? 'Exit Fullscreen (Esc or F)' : 'Enter Fullscreen (F)'}
             aria-label={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
           >
-            {isFullscreen ? <Minimize size={15} /> : <Maximize size={15} />}
+            {isFullscreen ? <Minimize size={14} /> : <Maximize size={14} />}
           </button>
         </div>
       </div>
