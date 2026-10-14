@@ -1,5 +1,5 @@
 import express from 'express';
-import { handleDoubt, handleVoiceDoubt, getPresentationDetails, handleUploadPresentation } from '../controllers/aiController.js';
+import { handleDoubt, handleVoiceDoubt, getPresentationDetails, handleUploadPresentation, handlePresentationFromUrl } from '../controllers/aiController.js';
 import { handleGenerateTTS, getAvailableNeuralVoices } from '../controllers/ttsController.js';
 import { aiRateLimiter, ttsRateLimiter, uploadRateLimiter } from '../middleware/rateLimiter.js';
 
@@ -22,8 +22,9 @@ router.get('/health', (req, res) => {
 router.post('/tts/speak', ttsRateLimiter, handleGenerateTTS);
 router.get('/tts/voices', getAvailableNeuralVoices);
 
-// Presentation upload / ingestion endpoint (Feature 8)
+// Presentation upload & URL link ingestion endpoints (Feature 8 + Post Explainer)
 router.post('/presentations/upload', uploadRateLimiter, handleUploadPresentation);
+router.post('/presentations/from-url', uploadRateLimiter, handlePresentationFromUrl);
 
 // Presentation details endpoint
 router.get('/presentations/:id', getPresentationDetails);

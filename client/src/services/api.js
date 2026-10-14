@@ -166,3 +166,35 @@ export async function uploadPresentation(payload) {
   const data = await res.json();
   return data;
 }
+
+/**
+ * Explain Post / Article from URL:
+ * Reaches out to the post link, extracts core matter, analyzes with Gemini,
+ * and generates a complete interactive keynote presentation with speech narration & quizzes.
+ */
+export async function explainPostUrl({ url, additionalNotes }) {
+  const res = await fetch(`${API_BASE}/presentations/from-url`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      url,
+      additionalNotes
+    })
+  });
+
+  if (!res.ok) {
+    let errorMsg = 'Failed to analyze post link. Please check the URL and try again.';
+    try {
+      const errorData = await res.json();
+      if (errorData.error) errorMsg = errorData.error;
+    } catch {
+      errorMsg = res.statusText || errorMsg;
+    }
+    throw new Error(errorMsg);
+  }
+
+  const data = await res.json();
+  return data;
+}

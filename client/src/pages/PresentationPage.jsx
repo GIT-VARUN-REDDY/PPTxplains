@@ -23,6 +23,7 @@ export function PresentationPage({
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [uploadModalTab, setUploadModalTab] = useState('link');
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
   const [isDimmed, setIsDimmed] = useState(false);
   const [showSubtitles, setShowSubtitles] = useState(true);
@@ -589,7 +590,14 @@ export function PresentationPage({
         onOpenShortcuts={() => handleOpenModal(setIsShortcutsOpen)}
         onOpenBrief={() => handleOpenModal(setIsBriefOpen)}
         onOpenQuiz={() => handleOpenModal(setIsQuizOpen)}
-        onOpenUpload={() => handleOpenModal(setIsUploadOpen)}
+        onOpenUpload={() => {
+          setUploadModalTab('file');
+          handleOpenModal(setIsUploadOpen);
+        }}
+        onOpenLink={() => {
+          setUploadModalTab('link');
+          handleOpenModal(setIsUploadOpen);
+        }}
         onBackToHome={onBackToHome}
       />
 
@@ -710,6 +718,7 @@ export function PresentationPage({
       {/* Feature 8: Upload / Ingest Presentation Modal */}
       <UploadPresentationModal
         isOpen={isUploadOpen}
+        initialTab={uploadModalTab}
         onClose={() => setIsUploadOpen(false)}
         onSuccess={(newId) => {
           window.location.href = `/presentation/${newId}`;

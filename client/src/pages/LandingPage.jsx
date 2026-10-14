@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, UploadCloud, ArrowRight, Mic, Sparkles, MessageSquare, Shield, Layers, ChevronDown } from 'lucide-react';
+import { Play, UploadCloud, ArrowRight, Mic, Sparkles, MessageSquare, Shield, Layers, ChevronDown, Link2 } from 'lucide-react';
 import { UploadPresentationModal } from '../components/UploadPresentationModal.jsx';
 import { CanvasBackground } from '../components/CanvasBackground.jsx';
 
@@ -47,6 +47,7 @@ const CHAPTERS = [
 
 export function LandingPage({ onStartPresentation }) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [uploadModalTab, setUploadModalTab] = useState('link');
   const containerRef = useRef(null);
   const [activeStep, setActiveStep] = useState(0); // 0, 1, 2
   const isTransitioningRef = useRef(false);
@@ -179,9 +180,39 @@ export function LandingPage({ onStartPresentation }) {
           />
         </div>
 
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <button
-            onClick={() => setIsUploadOpen(true)}
+            onClick={() => {
+              setUploadModalTab('link');
+              setIsUploadOpen(true);
+            }}
+            style={{
+              background: 'rgba(56, 189, 248, 0.12)',
+              border: '1px solid rgba(56, 189, 248, 0.45)',
+              color: '#38bdf8',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              fontSize: '11.5px',
+              fontWeight: '700',
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 0 14px rgba(56, 189, 248, 0.2)'
+            }}
+          >
+            <Link2 size={13} /> Paste Link
+          </button>
+
+          <button
+            onClick={() => {
+              setUploadModalTab('file');
+              setIsUploadOpen(true);
+            }}
             style={{
               background: 'transparent',
               border: '1px solid rgba(59, 130, 246, 0.45)',
@@ -193,11 +224,14 @@ export function LandingPage({ onStartPresentation }) {
               letterSpacing: '1px',
               textTransform: 'uppercase',
               cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
               transition: 'all 0.2s',
               whiteSpace: 'nowrap'
             }}
           >
-            Upload Deck
+            <UploadCloud size={13} /> Upload Deck
           </button>
 
           <button
@@ -453,7 +487,36 @@ export function LandingPage({ onStartPresentation }) {
                     </button>
 
                     <button
-                      onClick={() => setIsUploadOpen(true)}
+                      onClick={() => {
+                        setUploadModalTab('link');
+                        setIsUploadOpen(true);
+                      }}
+                      style={{
+                        background: 'rgba(56, 189, 248, 0.12)',
+                        color: '#38bdf8',
+                        border: '1px solid rgba(56, 189, 248, 0.45)',
+                        padding: 'clamp(14px, 2vw, 18px) clamp(22px, 3vw, 32px)',
+                        borderRadius: '6px',
+                        fontSize: 'clamp(11px, 1.6vw, 12.5px)',
+                        fontWeight: '700',
+                        letterSpacing: '1px',
+                        textTransform: 'uppercase',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        boxShadow: '0 4px 20px rgba(56, 189, 248, 0.25)',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <Link2 size={16} /> Paste Post Link
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setUploadModalTab('file');
+                        setIsUploadOpen(true);
+                      }}
                       style={{
                         background: 'rgba(255, 255, 255, 0.04)',
                         color: '#ffffff',
@@ -529,6 +592,7 @@ export function LandingPage({ onStartPresentation }) {
 
       <UploadPresentationModal
         isOpen={isUploadOpen}
+        initialTab={uploadModalTab}
         onClose={() => setIsUploadOpen(false)}
         onSuccess={(newId) => {
           window.location.href = `/presentation/${newId}`;

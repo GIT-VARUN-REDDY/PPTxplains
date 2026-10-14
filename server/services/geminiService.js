@@ -5,6 +5,7 @@ import { GoogleGenAI } from '@google/genai';
 import { SYSTEM_INSTRUCTION, buildDoubtPrompt } from '../utils/prompts.js';
 import { generateSlideSvg } from '../utils/slideSvgGenerator.js';
 import { saveCustomPresentation } from '../data/presentations.js';
+import { scrapePostUrl } from './urlScraperService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -283,40 +284,73 @@ Instructions:
 }
 
 /**
- * Feature 8: Ingest presentation from uploaded file (.pptx / .pdf / text outline)
- * Uses Gemini to extract title, structured slides, metrics, keypoints, narration, and quizzes,
- * and generates high-fidelity visual 16:9 SVGs.
+ * Feature 8: Ingest presentation from uploaded file (.pptx / .pdf / text outline) OR post URL
+ * Uses Gemini to reach out to the post/document, extract title, structured slides, metrics,
+ * key points, speech narration, and quizzes, and generates high-fidelity visual 16:9 SVGs.
  */
-export async function ingestPresentation({ fileBase64, mimeType, textContent, topicTitle }) {
+export async function ingestPresentation({ fileBase64, mimeType, textContent, topicTitle, postUrl, sourceInfo }) {
   const apiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : '';
   const configuredModel = process.env.GEMINI_MODEL ? process.env.GEMINI_MODEL.trim() : 'gemini-2.5-flash';
   const presId = 'custom-' + Date.now();
 
+  let resolvedText = textContent || '';
+  let resolvedTitle = topicTitle || '';
+  let resolvedSource = sourceInfo || null;
+
+  // If a post URL was passed and content hasn't been extracted yet, scrape it
+  if (postUrl && (!resolvedText || resolvedText.length < 50)) {
+    try {
+      const scraped = await scrapePostUrl(postUrl);
+      resolvedSource = scraped;
+      resolvedTitle = resolvedTitle || scraped.title;
+      resolvedText = scraped.textContent;
+    } catch (scrapeErr) {
+      console.warn('[Gemini Ingest] Scraper notice for URL:', scrapeErr.message);
+      resolvedTitle = resolvedTitle || `Post on ${postUrl}`;
+      resolvedText = resolvedText || `Post URL: ${postUrl}`;
+    }
+  }
+
+  const isPostLink = Boolean(postUrl);
+
   const promptText = `
-You are an expert executive presentation creator and deep-tech technical explainer.
-Analyze the provided presentation content/topic and generate a complete, professional, high-retention technical deck of 4 to 6 slides.
+You are an expert executive presentation creator, keynote speaker, and technical explainer.
+${isPostLink ? `The user has provided a link to an online post/article that they want explained:
+Source Link: ${postUrl}
+${resolvedSource?.siteName ? `Platform / Source: ${resolvedSource.siteName}` : ''}
+Article / Post Title: ${resolvedTitle}
+
+Post Content to Analyze & Explain:
+${resolvedText}
+
+YOUR TASK:
+Read and thoroughly understand the matter in this post. Break down the core problem, key thesis, architecture/mechanisms, practical takeaways, and conclusions.
+Transform this entire post into an engaging, structured keynote presentation deck of 4 to 6 slides that explains everything clearly to an audience.` : `Analyze the provided presentation content/topic and generate a complete, professional, high-retention technical deck of 4 to 6 slides.
+Presentation Topic/Outline/Text:
+${resolvedText || resolvedTitle || 'Enterprise Technology Architecture'}`}
+
 Output ONLY strict JSON in the following schema:
 {
-  "title": "Clear executive presentation title",
-  "description": "2-3 sentence executive description of the presentation",
+  "title": "${isPostLink ? 'Clear presentation title explaining the post' : 'Clear executive presentation title'}",
+  "description": "2-3 sentence executive description of what this presentation explains",
   "totalSlides": 5,
   "slides": [
     {
       "slideNumber": 1,
       "title": "Concise Slide Title",
       "subtitle": "Informative Subtitle",
-      "category": "Architecture / Overview / Deep Dive / Strategy / Summary",
+      "category": "Overview / Architecture / Deep Dive / Analysis / Strategy / Summary",
       "keyPoints": [
-        "First key technical architectural point",
-        "Second key technical architectural point",
-        "Third key technical architectural point"
+        "First key technical/substantive point",
+        "Second key technical/substantive point",
+        "Third key technical/substantive point"
       ],
       "metrics": [
         { "label": "Key Metric", "value": "4x", "change": "vs benchmark" },
         { "label": "Latency", "value": "<10ms", "change": "target SLA" }
       ],
-      "context": "Detailed background context for this slide...",
-      "narration": "Engaging, natural spoken explanation for speech synthesis (about 3-4 sentences)...",
+      "context": "Detailed background context for this slide (used by AI doubt assistant to answer questions)...",
+      "narration": "Engaging, natural spoken explanation for neural speech synthesis (about 3-4 natural conversational sentences explaining this slide completely)...",
       "quiz": {
         "question": "Comprehension check question testing this slide's core insight?",
         "options": ["Correct answer", "Distractor A", "Distractor B", "Distractor C"],
@@ -326,9 +360,6 @@ Output ONLY strict JSON in the following schema:
     }
   ]
 }
-
-Presentation Topic/Outline/Text:
-${textContent || topicTitle || 'Enterprise Technology Architecture'}
 `;
 
   let presentationData = null;
@@ -383,10 +414,13 @@ ${textContent || topicTitle || 'Enterprise Technology Architecture'}
 
   // Fallback presentation generator if API unavailable or parsing failed
   if (!presentationData) {
-    const title = topicTitle || (textContent ? textContent.slice(0, 45) : 'Custom Architecture Deck');
+    const title = resolvedTitle || (resolvedText ? resolvedText.slice(0, 50).replace(/[\r\n]+/g, ' ') : 'Presentation Overview');
+    const desc = isPostLink
+      ? `Executive presentation explaining the core insights, technical takeaways, and analysis from ${title} (${postUrl}).`
+      : `Comprehensive executive overview of ${title}, translated into modular, high-retention visual assets with AI voice narration and interactive doubt answering.`;
     presentationData = {
       title: title.endsWith('.') ? title.slice(0, -1) : title,
-      description: `Comprehensive executive overview of ${title}, translated into modular, high-retention visual assets with AI voice narration and interactive doubt answering.`,
+      description: desc,
       totalSlides: 4,
       slides: [
         {

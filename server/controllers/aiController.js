@@ -1,5 +1,6 @@
 import { getSlideContext, getPresentation } from '../data/presentations.js';
 import { answerDoubt, answerVoiceDoubt, ingestPresentation } from '../services/geminiService.js';
+import { scrapePostUrl } from '../services/urlScraperService.js';
 
 /**
  * Handle user doubt question for a specific presentation slide.
@@ -185,30 +186,89 @@ export async function handleVoiceDoubt(req, res, next) {
 }
 
 /**
- * Feature 8: Handle presentation ingestion from uploaded file or topic outline
+ * Feature 8: Handle presentation ingestion from uploaded file, topic outline, or post URL
  */
 export async function handleUploadPresentation(req, res, next) {
   try {
-    const { fileBase64, mimeType, textContent, topicTitle } = req.body;
+    const { fileBase64, mimeType, textContent, topicTitle, postUrl } = req.body;
 
-    if (!fileBase64 && !textContent && !topicTitle) {
+    if (!fileBase64 && !textContent && !topicTitle && !postUrl) {
       return res.status(400).json({
         success: false,
-        error: 'Please provide a file, text outline, or presentation topic.'
+        error: 'Please provide a post URL, presentation file, text outline, or presentation topic.'
       });
+    }
+
+    let resolvedText = textContent;
+    let resolvedTitle = topicTitle;
+    let sourceInfo = null;
+
+    if (postUrl) {
+      try {
+        const scraped = await scrapePostUrl(postUrl);
+        sourceInfo = scraped;
+        resolvedTitle = resolvedTitle || scraped.title;
+        resolvedText = scraped.textContent + (resolvedText ? `\n\nUser Notes: ${resolvedText}` : '');
+      } catch (scrapeErr) {
+        console.warn('[handleUploadPresentation] Scrape notice:', scrapeErr.message);
+        resolvedTitle = resolvedTitle || `Post on ${postUrl}`;
+        resolvedText = resolvedText || `Post URL: ${postUrl}`;
+      }
     }
 
     const presentation = await ingestPresentation({
       fileBase64,
       mimeType,
-      textContent,
-      topicTitle
+      textContent: resolvedText,
+      topicTitle: resolvedTitle,
+      postUrl,
+      sourceInfo
     });
 
     return res.status(200).json({
       success: true,
       presentationId: presentation.id,
-      presentation
+      presentation,
+      source: sourceInfo
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Handle presentation generation directly from a pasted post or article URL
+ */
+export async function handlePresentationFromUrl(req, res, next) {
+  try {
+    const { url, additionalNotes } = req.body;
+    if (!url || typeof url !== 'string' || !url.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please provide a valid post link (URL).'
+      });
+    }
+
+    const cleanUrl = url.trim();
+    const scraped = await scrapePostUrl(cleanUrl);
+
+    const presentation = await ingestPresentation({
+      postUrl: cleanUrl,
+      topicTitle: scraped.title,
+      textContent: scraped.textContent + (additionalNotes ? `\n\nUser Focus Notes: ${additionalNotes}` : ''),
+      sourceInfo: scraped
+    });
+
+    return res.status(200).json({
+      success: true,
+      presentationId: presentation.id,
+      presentation,
+      source: {
+        url: cleanUrl,
+        title: scraped.title,
+        description: scraped.description,
+        siteName: scraped.siteName
+      }
     });
   } catch (error) {
     next(error);

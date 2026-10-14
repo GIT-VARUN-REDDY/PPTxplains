@@ -15,7 +15,8 @@ import {
   UploadCloud,
   Moon,
   Sun,
-  Keyboard
+  Keyboard,
+  Link2
 } from 'lucide-react';
 
 function HeaderComponent({
@@ -36,6 +37,7 @@ function HeaderComponent({
   onOpenBrief,
   onOpenQuiz,
   onOpenUpload,
+  onOpenLink,
   onBackToHome
 }) {
   const [copied, setCopied] = useState(false);
@@ -304,6 +306,25 @@ function HeaderComponent({
 
         {/* Cluster 3: Utilities (Clean Compact Icon Buttons) */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+          {/* Paste Link to Explain as Presentation */}
+          {onOpenLink && (
+            <button
+              onClick={onOpenLink}
+              className="btn btn-ghost btn-icon hide-on-small-mobile"
+              style={{
+                height: '30px',
+                width: '30px',
+                borderRadius: '6px',
+                color: '#38bdf8',
+                backgroundColor: 'rgba(56, 189, 248, 0.1)'
+              }}
+              title="Paste Post Link to Explain as Presentation"
+              aria-label="Paste Post Link"
+            >
+              <Link2 size={14} />
+            </button>
+          )}
+
           {/* Upload Presentation */}
           {onOpenUpload && (
             <button
